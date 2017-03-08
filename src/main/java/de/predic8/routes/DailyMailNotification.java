@@ -1,6 +1,6 @@
 package de.predic8.routes;
 
-import de.predic8.util.EmailHandler;
+import de.predic8.util.EmailNewFiles;
 import de.predic8.util.OAuth;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -17,7 +17,7 @@ public class DailyMailNotification extends RouteBuilder {
                 .log("SENDING EMAIL")
                 .setHeader("subject", simple("Daily Report"))
                 .setHeader("firstName", simple(oAuth.properties.getProperty("user_name")))
-                .process(new EmailHandler())
+                .process(new EmailNewFiles())
                 .to("freemarker:/email-templates/daily_report.ftl")
                 .to(String.format("smtp://%s?password=%s&username=%s&to=%s&from=%s"
                         , oAuth.properties.getProperty("email_smtp")

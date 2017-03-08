@@ -5,7 +5,7 @@ import org.apache.camel.Exchange;
 import java.io.*;
 import java.nio.charset.Charset;
 
-public class EmailHandler implements org.apache.camel.Processor {
+public class EmailNewFiles implements org.apache.camel.Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
