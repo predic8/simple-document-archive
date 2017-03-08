@@ -9,7 +9,8 @@ public class Verify extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("quartz2://verify?cron=0/10+*+*+*+*+?")
+        // cron: every hour
+        from("quartz2://verify?cron=0+0+*+*+*+?")
                 .process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
