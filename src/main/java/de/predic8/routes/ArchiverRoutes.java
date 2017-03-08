@@ -17,12 +17,10 @@ public class ArchiverRoutes extends RouteBuilder {
                 .process(new CreateMessageDigest())
                 .to("file:document-archive/archive?fileName=${property.fileName}")
                 .to("direct:get-last-hash")
-                //.log("BODY AFTER LAST HASH -> ${body}")
                 .process(new AddHashedBodyToDigest())
                 .setProperty("entry").simple("${date:now:yyyy-MM-dd HH:mm:ss} ${property.fileName} ${property.digest}")
                 .setBody().simple("${property.entry}\n")
                 .transform(body().append("\n"))
-                //.log("BODY BEFORE -> ${body}")
                 .to("file:document-archive/logs?fileExist=Append&fileName=log.txt")
                 .to("file:document-archive/notify?fileExist=Append&fileName=new_files.txt")
                 .setBody().simple("${property.entry}");
@@ -36,22 +34,17 @@ public class ArchiverRoutes extends RouteBuilder {
 
         from("direct:get-last-hash").routeId("LastHash")
                 .process(new LogExists())
-                //.log("CURRENT FILE -> ${property.fileName}")
                 .choice()
                     .when(exchangeProperty("fileExists"))
-                        //.log("EXISTS -> log.txt")
                         .process(new GetLastHash())
                     .otherwise()
-                        //.log("DOESN'T EXIST -> log.txt")
                         .setBody().simple("123")
                     .end();
-                    //.log("LASTHASH -> ${body}");
     }
 
     public void start() throws Exception {
         CamelContext ctx = new DefaultCamelContext();
         ctx.addRoutes(new ArchiverRoutes());
         ctx.start();
-        //Thread.sleep(100000);
     }
 }

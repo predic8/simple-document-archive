@@ -18,48 +18,27 @@ public class VerifyRoutes extends RouteBuilder {
     public void configure() throws Exception {
 
         from("file:document-archive/logs?fileName=log.txt&noop=true")
-                //.setProperty("lastHash").simple("123")
                 .split(body().tokenize("\n"))
                     .process(new AddVerifyProperties())
-                    //.log("VERIFYING FILE -> ${property.docName}")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            File file = new File(String.format("document-archive/archive/%s"
-                                , exchange.getProperty("docName")));
-                            exchange.getIn().setBody(file);
-                        }
+                    .process(exchange -> {
+                        File file = new File(String.format("document-archive/archive/%s"
+                            , exchange.getProperty("docName")));
+                        exchange.getIn().setBody(file);
                     })
-                    //.pollEnrich("file:document-archive/archive?fileName=${date:now:yyyy}/${date:now:MM}/${property.docName}&noop=true")
-                    //.log("BODY -> ${body}")
                     .process(new CreateMessageDigest())
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exc) throws Exception {
-                            exc.getIn().setBody(VerifyRoutes.lastHash);
-                        }
-                    })
-                    //.log("LASTHASH -> " + lastHash)
+                    .process(exc -> exc.getIn().setBody(VerifyRoutes.lastHash))
                     .process(new AddHashedBodyToDigest())
                     .setProperty("entry").simple("${property.digest}")
-                    //.log("DIGEST -> ${property.digest}")
                     .choice()
                         .when(exchangeProperty("entry").isEqualTo(exchangeProperty("docHash")))
                             .log("--> OK <--")
-                            .process(new Processor() {
-                                @Override
-                                public void process(Exchange exc) throws Exception {
-                                    VerifyRoutes.lastHash = (String) exc.getProperty("docHash");
-                                }
-                            })
+                            .process(exc -> VerifyRoutes.lastHash = (String) exc.getProperty("docHash"))
                     .endChoice()
                         .otherwise()
                             .log("ERROR -> " + lastHash)
-                            .process(new Processor() {
-                                @Override
-                                public void process(Exchange exchange) throws Exception {
-                                    HashErrorNotification errorNotify = new HashErrorNotification();
-                                    errorNotify.start((String) exchange.getProperty("docName"));
-                                }
+                            .process(exchange -> {
+                                HashErrorNotification errorNotify = new HashErrorNotification();
+                                errorNotify.start((String) exchange.getProperty("docName"));
                             })
                         .end()
                 .end();
@@ -69,7 +48,6 @@ public class VerifyRoutes extends RouteBuilder {
         CamelContext ctx = new DefaultCamelContext();
         ctx.addRoutes(new VerifyRoutes());
         ctx.start();
-        //Thread.sleep(100000);
     }
 
     public static void main(String[] args) throws Exception {

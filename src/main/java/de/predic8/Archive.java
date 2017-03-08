@@ -19,14 +19,12 @@ public class Archive {
 
     public void boot() throws Exception {
         main = new Main();
-        Thread archiver = new Thread() {
-            public void run() {
-                ArchiverMain archiverMain = new ArchiverMain();
-                try {
-                    archiverMain.boot();
-                } catch (Exception e) { e.printStackTrace(); }
-            }
-        };
+        Thread archiver = new Thread(() -> {
+            ArchiverMain archiverMain = new ArchiverMain();
+            try {
+                archiverMain.boot();
+            } catch (Exception e) { e.printStackTrace(); }
+        });
         archiver.start();
         main.addRouteBuilder(new DailyMail());
         main.addRouteBuilder(new Verify());

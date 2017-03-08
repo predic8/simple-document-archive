@@ -11,12 +11,9 @@ public class DailyMail extends RouteBuilder {
     public void configure() throws Exception {
         // cron: at 10:00 pm
         from("quartz2://notify?cron=0+0+22+*+*+?")
-                .process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        DailyMailNotification notify = new DailyMailNotification();
-                        notify.start();
-                    }
+                .process(exchange -> {
+                    DailyMailNotification notify = new DailyMailNotification();
+                    notify.start();
                 });
     }
 }

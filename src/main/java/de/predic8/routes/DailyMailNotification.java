@@ -12,8 +12,7 @@ public class DailyMailNotification extends RouteBuilder {
 
     public void configure() throws Exception {
 
-        //from("file:document-archive/logs?fileName=log.txt&noop=true")
-        from("file:document-archive/notify?fileName=new_files.txt&noop=true").routeId("Notify")
+        from("file:document-archive/notify?fileName=new_files.txt&noop=true").routeId("DailyNotify")
                 .log("SENDING EMAIL")
                 .setHeader("subject", simple("Daily Report"))
                 .setHeader("firstName", simple(oAuth.properties.getProperty("user_name")))
