@@ -2,6 +2,7 @@ package de.predic8;
 
 import de.predic8.quartz.DailyMail;
 import de.predic8.quartz.Verify;
+import de.predic8.util.PropertyFile;
 import org.apache.camel.main.Main;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,13 +12,15 @@ public class Archive {
 
     private Main main;
 
+    public static PropertyFile properties = new PropertyFile("application.properties");
+
     public static void main(String[] args) throws Exception {
         SpringApplication.run(Archive.class, args);
         Archive archive = new Archive();
         archive.boot();
     }
 
-    public void boot() throws Exception {
+    private void boot() throws Exception {
         main = new Main();
         Thread archiver = new Thread(() -> {
             ArchiverMain archiverMain = new ArchiverMain();
