@@ -7,8 +7,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 
 public class ArchiverRoutes extends RouteBuilder {
 
-    private OAuth oAuth = new OAuth();
-
     public void configure() throws Exception {
 
         from("file:document-archive/in?noop=true").routeId("Archiver")
@@ -26,10 +24,10 @@ public class ArchiverRoutes extends RouteBuilder {
                 .setBody().simple("${property.entry}");
                 /* SEND HASH TO TWITTER
                 .to(String.format("twitter://timeline/user?consumerKey=%s&consumerSecret=%s&accessToken=%s&accessTokenSecret=%s"
-                    , oAuth.properties.getProperty("twitter_consumerKey")
-                    , oAuth.properties.get("twitter_consumerSecret")
-                    , oAuth.properties.getProperty("twitter_accessToken")
-                    , oAuth.properties.getProperty("twitter_accessTokenSecret")));
+                    , Archive.properties.prop.getProperty("twitter_consumerKey")
+                    , Archive.properties.prop.getProperty("twitter_consumerSecret")
+                    , Archive.properties.prop.getProperty("twitter_accessToken")
+                    , Archive.properties.prop.getProperty("twitter_accessTokenSecret")));
                 */
 
         from("direct:get-last-hash").routeId("LastHash")
