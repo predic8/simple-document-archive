@@ -4,8 +4,6 @@ import de.predic8.util.AddHashedBodyToDigest;
 import de.predic8.util.AddVerifyProperties;
 import de.predic8.util.CreateMessageDigest;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
