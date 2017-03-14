@@ -5,16 +5,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class OAuth {
+public class PropertyFile {
 
-    public Properties properties;
+    public Properties prop;
     private InputStream input;
 
-    public OAuth() {
+    public PropertyFile(String fileName) {
         try {
-            properties = new Properties();
-            input = new FileInputStream(getClass().getClassLoader().getResource("application.properties").getFile());
-            properties.load(input);
+            prop = new Properties();
+            input = new FileInputStream(getClass().getClassLoader().getResource(fileName).getFile());
+            prop.load(input);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
