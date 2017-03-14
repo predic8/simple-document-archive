@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 
 	<name>document-archive</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Simple Document Archive with Blockchain based Integrity</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -21,6 +21,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<jdk.version>1.8</jdk.version>
 		<java.version>1.8</java.version>
 	</properties>
 
@@ -69,15 +70,57 @@
 	</dependencies>
 
 	<build>
+		<finalName>document-archive</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.6.0</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>**/log4j.properties</exclude>
+					</excludes>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>de.predic8.Archive</mainClass>
+							<classpathPrefix>dependency-jars/</classpathPrefix>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.5.1</version>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeScope>runtime</includeScope>
+							<outputDirectory>${project.build.directory}/dependency-jars/</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
