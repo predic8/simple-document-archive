@@ -12,7 +12,7 @@ public class Archive {
 
     private Main main;
 
-    public static PropertyFile properties = new PropertyFile("application.properties");
+    //public static PropertyFile properties = new PropertyFile("application.properties");
 
     public static void main(String[] args) throws Exception {
         SpringApplication.run(Archive.class, args);

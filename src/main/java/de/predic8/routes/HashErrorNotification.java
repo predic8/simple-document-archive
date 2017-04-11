@@ -23,15 +23,15 @@ public class HashErrorNotification extends RouteBuilder {
         from("file:document-archive/logs?fileName=log.txt&noop=true")
                 .log("SENDING HASH ERROR MAIL")
                 .setHeader("subject", simple("Hash Error Detected"))
-                .setHeader("firstName", simple(Archive.properties.prop.getProperty("user_name")))
+                //.setHeader("firstName", simple(Archive.properties.prop.getProperty("user_name")))
                 .setBody(simple(fileName))
                 .to("freemarker:/email-templates/verify_fail.ftl")
-                .to(String.format("smtp://%s?password=%s&username=%s&to=%s&from=%s"
+                /*.to(String.format("smtp://%s?password=%s&username=%s&to=%s&from=%s"
                         , Archive.properties.prop.getProperty("email_smtp")
                         , Archive.properties.prop.getProperty("email_password")
                         , Archive.properties.prop.getProperty("email_username")
                         , Archive.properties.prop.getProperty("email_recipient")
-                        , Archive.properties.prop.getProperty("email_username")));
+                        , Archive.properties.prop.getProperty("email_username")))*/;
     }
 
     public void start(String fileName) throws Exception {

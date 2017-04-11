@@ -13,15 +13,15 @@ public class DailyMailNotification extends RouteBuilder {
         from("file:document-archive/notify?fileName=new_files.txt&noop=true").routeId("DailyNotify")
                 .log("SENDING EMAIL")
                 .setHeader("subject", simple("Daily Report"))
-                .setHeader("firstName", simple(Archive.properties.prop.getProperty("user_name")))
+                //.setHeader("firstName", simple(Archive.properties.prop.getProperty("user_name")))
                 .process(new EmailNewFiles())
                 .to("freemarker:/email-templates/daily_report.ftl")
-                .to(String.format("smtp://%s?password=%s&username=%s&to=%s&from=%s"
+                /*.to(String.format("smtp://%s?password=%s&username=%s&to=%s&from=%s"
                         , Archive.properties.prop.getProperty("email_smtp")
                         , Archive.properties.prop.getProperty("email_password")
                         , Archive.properties.prop.getProperty("email_username")
                         , Archive.properties.prop.getProperty("email_recipient")
-                        , Archive.properties.prop.getProperty("email_username")));
+                        , Archive.properties.prop.getProperty("email_username")))*/;
 
     }
 
