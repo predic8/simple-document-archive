@@ -8,7 +8,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 public class ArchiverRoutes extends RouteBuilder {
 
     public void configure() throws Exception {
-
+        // TODO remove noop
         from("file:document-archive/in?noop=true").routeId("Archiver")
                 .setProperty("fileName").simple("/${date:now:yyyy}/${date:now:MM}/${in.header.CamelFileName}")
                 .process(new NormalizeFileName())
