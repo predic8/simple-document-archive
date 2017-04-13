@@ -10,7 +10,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import java.io.File;
 
 public class VerifyRoutes extends RouteBuilder {
-
+    // TODO try to remove this static var
     public static String lastHash = "123";
 
     public void configure() throws Exception {
