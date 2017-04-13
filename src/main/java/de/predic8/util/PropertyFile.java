@@ -9,6 +9,7 @@ public class PropertyFile {
 
     private static final PropertyFile INSTANCE = new PropertyFile();
     private static final Properties PROPERTIES = new Properties();
+
     private PropertyFile() {}
 
     public static PropertyFile getInstance() {
