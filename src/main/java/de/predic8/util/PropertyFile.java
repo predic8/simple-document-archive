@@ -7,29 +7,26 @@ import java.util.Properties;
 
 public class PropertyFile {
 
-    private static final PropertyFile INSTANCE = new PropertyFile();
-    private static final Properties PROPERTIES = new Properties();
+    private static PropertyFile INSTANCE = null;
+    private Properties properties;
 
-    private PropertyFile() {}
+    protected PropertyFile() throws IOException {
+        properties = new Properties();
+        properties.load(getClass().getResourceAsStream("application.properties"));
+    }
 
     public static PropertyFile getInstance() {
-        InputStream input = null;
         if (INSTANCE == null) {
             try {
-                input = new FileInputStream(PropertyFile.class.getClassLoader().getResource("application.properties").getFile());
-                PROPERTIES.load(input);
+                INSTANCE = new PropertyFile();
             } catch (IOException e) {
                 e.printStackTrace();
-            } finally {
-                if (input != null) {
-                    try {
-                        input.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
             }
         }
         return INSTANCE;
+    }
+
+    public String getProperty(String key) {
+        return properties.getProperty(key);
     }
 }
