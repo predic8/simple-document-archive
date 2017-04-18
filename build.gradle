@@ -71,11 +71,8 @@ deployment {
 					metadata: [ labels: [ app: "$deploymentName" ] ],
 					spec: [
 						containers: [ [
-							image: "hub.predic8.de/${imageName}:${project.ext.version}",
+							image: "${imageName}:${project.ext.version}",
 							name: "${imageName}",
-						] ],
-						imagePullSecrets: [ [
-							name: "p8-hub-credentials"
 						] ]
 					]
 				]
