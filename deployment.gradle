@@ -80,15 +80,13 @@ afterEvaluate {
         }
     }
 
-	task apply {
-		doLast {
-			if (deploymentExists(deploymentName)) {
-				logger.quiet('deploy Deployment')
-				apply.dependsOn deployDeployment
-			} else {
-				logger.quiet('update Deployment')
-				apply.dependsOn updateDeployment
-			}
+	task apply (dependsOn: ['deployDeployment', 'updateDeployment']){
+		if (deploymentExists(deploymentName)) {
+			logger.quiet('update Deployment')
+			deployDeployment.enabled = false
+		} else {
+			logger.quiet('deploy Deployment')
+			updateDeployment.enabled = false
 		}
 	}
 
