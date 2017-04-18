@@ -30,7 +30,7 @@ task createDockerfile(type: com.bmuschko.gradle.docker.tasks.image.Dockerfile) {
 	dependsOn copyShell
     destFile = project.file("${project.buildDir}/generated/Dockerfile")
 	destFile.parentFile.mkdirs()
-    from 'alpine:8_jdk'
+    from 'anapsix/alpine-java:8_jdk'
     runCommand('apk update && apk add maven')
     runCommand('mkdir -p /usr/src/app')
     addFile('.', '/usr/src/app')
