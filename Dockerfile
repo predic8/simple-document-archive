@@ -12,7 +12,7 @@ RUN curl -sS -L -o /gradle.zip http://services.gradle.org/distributions/gradle-3
 
 ENV PATH=/opt/gradle/bin:$PATH
 
-RUN wget -q https://storage.googleapis.com/kubernetes-release/release/v1.6.1/bin/linux/amd64/kubectl
+RUN wget -nv https://storage.googleapis.com/kubernetes-release/release/v1.6.1/bin/linux/amd64/kubectl
 
 WORKDIR /app
 
