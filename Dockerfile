@@ -12,9 +12,10 @@ RUN curl -sS -L -o /gradle.zip http://services.gradle.org/distributions/gradle-3
 
 ENV PATH=/opt/gradle/bin:$PATH
 
+WORKDIR /app
+
 RUN wget -nv https://storage.googleapis.com/kubernetes-release/release/v1.6.1/bin/linux/amd64/kubectl
 
-WORKDIR /app
 
 RUN chmod +x kubectl
 RUN mv kubectl /usr/bin
