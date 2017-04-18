@@ -73,7 +73,10 @@ deployment {
 						containers: [ [
 							image: "hub.predic8.de/${imageName}:${project.ext.version}",
 							name: "${deploymentName}",
-						] ]
+						] ],
+						imagePullSecrets: [ [
+							name: "p8-hub-credentials"
+						]]
 					]
 				]
 			]
