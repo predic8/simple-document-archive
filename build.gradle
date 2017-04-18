@@ -31,7 +31,7 @@ task createDockerfile(type: com.bmuschko.gradle.docker.tasks.image.Dockerfile) {
     destFile = project.file("${project.buildDir}/generated/Dockerfile")
 	destFile.parentFile.mkdirs()
     from 'anapsix/alpine-java:8_jdk'
-    runCommand ('echo "http://dl-6.alpinelinux.org/alpine/edge/community" > /etc/apk/repositories')
+    runCommand ('echo "http://dl-4.alpinelinux.org/alpine/edge/community" > /etc/apk/repositories')
     runCommand('apk add -U maven')
     runCommand('mkdir -p /usr/src/app')
     addFile('.', '/usr/src/app')
