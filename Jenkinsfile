@@ -16,6 +16,7 @@ node {
  checkout scm
  stash 'src'
 }
+
 stage 'Build'
 
 node {
