@@ -81,12 +81,15 @@ afterEvaluate {
     }
 
 	task apply {
-		if (deploymentExists(deploymentName)) {
-			apply.dependsOn deployDeployment
-		} else {
-			apply.dependsOn updateDeployment
+		doLast {
+			if (deploymentExists(deploymentName)) {
+				logger.quiet('deploy Deployment')
+				apply.dependsOn deployDeployment
+			} else {
+				logger.quiet('update Deployment')
+				apply.dependsOn updateDeployment
+			}
 		}
-
 	}
 
 }
