@@ -1,0 +1,73 @@
+import groovy.json.JsonSlurper
+
+class Docker {
+	def dir
+
+	def dir(def dir) {
+		this.dir = dir
+	}
+}
+
+def docker = project.extensions.create 'dockerBase', Docker
+
+['HUB_USER', 'HUB_PASSWORD'].each {
+	if (!System.env[it]) {
+		throw new Exception("Please set the ${it} env var.");
+	}
+}
+
+
+def getVersion() {
+	if (System.env.BUILD_NUMBER)
+		return "j${System.env.BUILD_NUMBER}"
+
+	def authString = (System.env.HUB_USER + ":" + System.env.HUB_PASSWORD).getBytes().encodeBase64().toString()
+
+	def urlConnection = new URL("https://hub.predic8.de/v2/${imageName}/tags/list").openConnection()
+	urlConnection.setRequestProperty("Authorization", "Basic $authString")
+
+	int version
+	
+	try {
+		def reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))
+
+		def json = new JsonSlurper().parse(reader)
+		def tags = json.tags
+		def tag = tags.findAll { it =~ /^\d+$/ }.max { a, b -> Long.parseLong(a) <=> Long.parseLong(b) }
+		
+
+		if (tag == null) {
+			version = 1
+		} else {
+			version = Integer.parseInt(tag) + 1
+		}
+	} catch (FileNotFoundException e) {
+		version = 1
+	}
+
+	version
+}
+
+def version = getVersion()
+project.ext.version = version
+
+afterEvaluate {
+
+	def dir = docker.dir
+
+	task dockerImage(type: Exec, dependsOn: 'createDockerfile') {
+		commandLine 'docker', 'build', '-t', "${imageName}:$version", dir.absolutePath
+	}
+
+	task dockerHubLogin(type: Exec) {
+		commandLine 'docker', 'login', '-u', System.env.HUB_USER, '-p', System.env.HUB_PASSWORD, 'hub.predic8.de'
+	}
+
+	task dockerImageTag(type: Exec, dependsOn: 'dockerImage') {
+		commandLine "docker", "tag", "${imageName}:$version", "hub.predic8.de/${imageName}:$version"
+	}
+
+	task dockerPushImage(type: Exec, dependsOn: ['dockerImageTag', 'dockerHubLogin']) {
+		commandLine "docker", "push", "hub.predic8.de/${imageName}:$version"
+	}
+}

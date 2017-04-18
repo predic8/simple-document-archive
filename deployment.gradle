@@ -1,0 +1,91 @@
+class Deployment {
+	def descriptor
+	def clusterUrl
+	
+    def descriptor(def descriptor) {
+		this.descriptor = descriptor
+	}
+	def clusterUrl(def clusterUrl) {
+		this.clusterUrl = clusterUrl
+	}
+}
+
+def deployment = project.extensions.create 'deployment', Deployment
+
+def deploymentExists(deploymentName) {
+	def proc = "kubectl -s ${deployment.clusterUrl} get deployment $deploymentName".execute(null, project.buildDir)
+	def sout = new StringBuilder(), serr = new StringBuilder()
+	proc.consumeProcessOutput(sout, serr)
+	proc.waitForOrKill(10000)
+
+	if (sout.toString().equals(""))
+		false
+	else
+		true
+}
+
+afterEvaluate {
+	
+	project.defaultTasks 'apply'
+	
+	def deploymentName = deployment.descriptor.metadata.name
+	
+	task createDeploymentDescriptor() {
+		doLast {
+			def o = deployment.descriptor
+			def outputDir = file("${project.buildDir}/generated/kubernetes")
+			if (!outputDir.exists() && !outputDir.mkdirs())
+				throw new Exception("Could not create ${outputDir}");
+			new File(outputDir, "deployment.json").text = groovy.json.JsonOutput.toJson(o)
+		}
+	}
+
+	task removeDeployment(dependsOn: 'createDeploymentDescriptor') {
+		doLast {
+			def proc = "kubectl -s ${deployment.clusterUrl} delete -f generated/kubernetes/deployment.json --cascade=false".execute(null, project.buildDir)
+			def sout = new StringBuilder(), serr = new StringBuilder()
+			proc.consumeProcessOutput(sout, serr)
+			proc.waitForOrKill(10000)
+			println "out> $sout err> $serr"
+			if (proc.exitValue() != 0)
+				throw new RuntimeException("Exit code is not zero.");
+			
+		}
+	}
+
+	task deployDeployment(dependsOn: ['createDeploymentDescriptor', 'testDockerImage']) {
+		doLast {
+    	    def proc = "kubectl -s ${deployment.clusterUrl} create -f generated/kubernetes/deployment.json".execute(null, project.buildDir)
+	    	def sout = new StringBuilder(), serr = new StringBuilder()
+		    proc.consumeProcessOutput(sout, serr)
+			proc.waitForOrKill(10000)
+    		if (serr.length() > 0)
+	    		throw new Exception(serr.toString())
+			
+		    println "out> $sout err> $serr"
+			if (proc.exitValue() != 0)
+			    throw new RuntimeException("Exit code is not zero.");
+        }
+	}
+
+    task updateDeployment(dependsOn: "createDeploymentDescriptor") {
+        doLast {
+            def proc = "kubectl -s ${deployment.clusterUrl} apply -f generated/kubernetes/deployment.json".execute(null, project.buildDir)
+            def sout = new StringBuilder(), serr = new StringBuilder()
+            proc.consumeProcessOutput(sout, serr)
+            proc.waitForOrKill(10000)
+            println "out> $sout err> $serr"
+            if (proc.exitValue() != 0)
+                throw new RuntimeException("Exit code is not zero.");
+        }
+    }
+
+	task apply(dependsOn: 'deployDeployment') {
+		//if (deploymentExists(deploymentName)) {
+		//	deployDeployment.dependsOn removeDeployment
+		//	dependsOn triggerDaemonSetPodRestarts
+		//}
+
+	}
+
+}
