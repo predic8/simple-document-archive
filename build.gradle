@@ -30,13 +30,14 @@ task createDockerfile(type: com.bmuschko.gradle.docker.tasks.image.Dockerfile) {
 	dependsOn copyShell
     destFile = project.file("${project.buildDir}/generated/Dockerfile")
 	destFile.parentFile.mkdirs()
-    from 'maven:3.5.0-jdk-8-alpine'
+    from 'alpine:8_jdk'
+    runCommand('apk update && apk add maven')
+    runCommand('mkdir -p /usr/src/app')
     addFile('.', '/usr/src/app')
     workingDir('/usr/src/app')
     runCommand('mvn -q install')
     runCommand('mv target/document-archive.jar .')
     runCommand('rm -r src/ target/ pom.xml')
-    entryPoint('')
     defaultCommand('java -jar document-archive.jar')
 }
 
