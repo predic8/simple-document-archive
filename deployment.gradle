@@ -80,11 +80,12 @@ afterEvaluate {
         }
     }
 
-	task apply(dependsOn: 'deployDeployment') {
-		//if (deploymentExists(deploymentName)) {
-		//	deployDeployment.dependsOn removeDeployment
-		//	dependsOn triggerDaemonSetPodRestarts
-		//}
+	task apply {
+		if (deploymentExists(deploymentName)) {
+			apply.dependsOn deployDeployment
+		} else {
+			apply.dependsOn updateDeployment
+		}
 
 	}
 
