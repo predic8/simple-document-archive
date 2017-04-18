@@ -33,7 +33,7 @@ task createDockerfile(type: com.bmuschko.gradle.docker.tasks.image.Dockerfile) {
     from 'maven:3.5.0-jdk-8-alpine'
     addFile('.', '/usr/src/app')
     workingDir('/usr/src/app')
-    runCommand('mvn install')
+    runCommand('mvn -q install')
     runCommand('mv target/document-archive.jar .')
     runCommand('rm -r src/ target/ pom.xml')
     defaultCommand('java -jar document-archive.jar')
@@ -72,7 +72,7 @@ deployment {
 					spec: [
 						containers: [ [
 							image: "${imageName}:${project.ext.version}",
-							name: "${imageName}",
+							name: "${deploymentName}",
 						] ]
 					]
 				]
