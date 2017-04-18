@@ -73,7 +73,7 @@ node {
 }
 
 
-def stageTasks = [ 'createDockerfile', 'dockerHubLogin', 'createDeploymentDescriptor','dockerImage'/*, 'dockerImageTag', 'dockerPushImage'*/, 'apply' ]
+def stageTasks = [ 'createDockerfile', 'dockerHubLogin', 'createDeploymentDescriptor','dockerImage', 'dockerImageTag', 'dockerPushImage', 'apply' ]
 
 for (int i=0; i < stageTasks.size(); i++) {
  stage(stageTasks[i]) {

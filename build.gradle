@@ -71,7 +71,7 @@ deployment {
 					metadata: [ labels: [ app: "$deploymentName" ] ],
 					spec: [
 						containers: [ [
-							image: "${imageName}:${project.ext.version}",
+							image: "hub.predic8.de/${imageName}:${project.ext.version}",
 							name: "${deploymentName}",
 						] ]
 					]
