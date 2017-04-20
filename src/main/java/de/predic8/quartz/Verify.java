@@ -9,9 +9,11 @@ public class Verify extends RouteBuilder {
     public void configure() throws Exception {
         // cron: every hour
         from("quartz2://verify?cron=0+0+*+*+*+?")
+        //from("quartz2://verify?cron=30+*+*+*+*+?")
                 .process(exchange -> {
                     VerifyRoutes verify = new VerifyRoutes();
                     verify.lastHash = "123";
+                    System.out.println("Verify archive...");
                     verify.start();
                 });
     }
