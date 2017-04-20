@@ -31,11 +31,7 @@ public class VerifyRoutes extends RouteBuilder {
                         .when(exchangeProperty("entry").isEqualTo(exchangeProperty("docHash")))
                             .log("--> OK <--")
                             .process(exc -> VerifyRoutes.lastHash = (String) exc.getProperty("docHash"))
-                            .process(exchange -> {
-                                exchange.setProperty("OK", String.class);
-                                HashNotification okNotify = new HashNotification();
-                                okNotify.start();
-                            })
+                            .to("direct:valid")
                     .endChoice()
                         .otherwise()
                             .log("ERROR -> " + lastHash)
@@ -45,19 +41,20 @@ public class VerifyRoutes extends RouteBuilder {
                             })
                         .end()
                 .end();
+
+        from("direct:valid")
+                .onCompletion()
+                    .process(exc -> {
+                        HashNotification ok = new HashNotification();
+                        ok.start();
+                    })
+                .end()
+                .log("EVERYTHING OK");
     }
 
     public void start() throws Exception {
         CamelContext ctx = new DefaultCamelContext();
         ctx.addRoutes(new VerifyRoutes());
         ctx.start();
-    }
-
-    public static void main(String[] args) throws Exception {
-        CamelContext ctx = new DefaultCamelContext();
-        ctx.addRoutes(new VerifyRoutes());
-        ctx.start();
-        Thread.sleep(10000);
-        ctx.stop();
     }
 }
