@@ -31,11 +31,16 @@ public class VerifyRoutes extends RouteBuilder {
                         .when(exchangeProperty("entry").isEqualTo(exchangeProperty("docHash")))
                             .log("--> OK <--")
                             .process(exc -> VerifyRoutes.lastHash = (String) exc.getProperty("docHash"))
+                            .process(exchange -> {
+                                exchange.setProperty("OK", String.class);
+                                HashNotification okNotify = new HashNotification();
+                                okNotify.start();
+                            })
                     .endChoice()
                         .otherwise()
                             .log("ERROR -> " + lastHash)
                             .process(exchange -> {
-                                HashErrorNotification errorNotify = new HashErrorNotification();
+                                HashNotification errorNotify = new HashNotification();
                                 errorNotify.start((String) exchange.getProperty("docName"));
                             })
                         .end()
