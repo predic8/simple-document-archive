@@ -32,7 +32,8 @@ public class HashErrorNotification extends RouteBuilder {
                         , PropertyFile.getInstance().getProperty("email_password")
                         , PropertyFile.getInstance().getProperty("email_username")
                         , PropertyFile.getInstance().getProperty("email_recipient")
-                        , PropertyFile.getInstance().getProperty("email_username")));
+                        , PropertyFile.getInstance().getProperty("email_username")))
+                .log("HASH ERROR MAIL SEND");
     }
 
     public void start(String fileName) throws Exception {
