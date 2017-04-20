@@ -12,7 +12,7 @@ public class PropertyFile {
 
     protected PropertyFile() throws IOException {
         properties = new Properties();
-        properties.load(getClass().getResourceAsStream("application.properties"));
+        properties.load(getClass().getClassLoader().getResourceAsStream("application.properties"));
     }
 
     public static PropertyFile getInstance() {
