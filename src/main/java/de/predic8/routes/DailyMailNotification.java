@@ -22,7 +22,8 @@ public class DailyMailNotification extends RouteBuilder {
                         , PropertyFile.getInstance().getProperty("email_password")
                         , PropertyFile.getInstance().getProperty("email_username")
                         , PropertyFile.getInstance().getProperty("email_recipient")
-                        , PropertyFile.getInstance().getProperty("email_username")));
+                        , PropertyFile.getInstance().getProperty("email_username")))
+                .log("EMAIL SEND");
 
     }
 
