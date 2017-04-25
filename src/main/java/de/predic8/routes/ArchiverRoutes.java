@@ -2,13 +2,13 @@ package de.predic8.routes;
 
 import de.predic8.util.*;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
 public class ArchiverRoutes extends RouteBuilder {
 
     public void configure() throws Exception {
-        // TODO remove noop
         //from("file:document-archive/in?noop=true").routeId("Archiver")
         from("file:document-archive/in").routeId("Archiver")
                 .setProperty("fileName").simple("/${date:now:yyyy}/${date:now:MM}/${date:now:HH-mm-ss-ms}_${in.header.CamelFileName}")
