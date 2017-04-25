@@ -11,7 +11,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 
 public class HashNotification extends RouteBuilder {
 
-    private String fileName = "";
+    private static String fileName = "";
 
     public HashNotification() {
         super();
@@ -35,25 +35,32 @@ public class HashNotification extends RouteBuilder {
         from("file:document-archive/logs?fileName=log.txt&noop=true")
                 .choice()
                     .when(method(HashNotification.class, "error"))
-                        .log("SENDING HASH ERROR MAIL")
-                        .setHeader("subject", simple("Hash Error Detected"))
-                        .setHeader("firstName", simple(PropertyFile.getInstance().getProperty("user_name")))
-                        .setBody(simple(fileName))
-                        .to("freemarker:/email-templates/verify_fail.ftl")
+                        .to("direct:everythingOk")
                     .otherwise()
-                        .log("SENDING EVERYTHING OK MAIL")
-                        .setHeader("subject", simple("Everything OK!"))
-                        .setHeader("firstName", simple(PropertyFile.getInstance().getProperty("user_name")))
-                        .setBody(simple("No files in your document archive have been changed"))
-                        .to("freemarker:/email-templates/verify_ok.ftl")
+                        .to("direct:hashError")
                 .end()
                 .process(new AttachLogfile())
                 .to(smtp)
                 .log("HASH MAIL SEND");
+
+        from("direct:hashError")
+                .log("SENDING HASH ERROR MAIL")
+                .setHeader("subject", simple("Hash Error Detected"))
+                .setHeader("firstName", simple(PropertyFile.getInstance().getProperty("user_name")))
+                .setBody(simple(fileName))
+                .to("freemarker:/email-templates/verify_fail.ftl");
+
+        from("direct:everythingOk")
+                .log("SENDING EVERYTHING OK MAIL")
+                .setHeader("subject", simple("Everything OK!"))
+                .setHeader("firstName", simple(PropertyFile.getInstance().getProperty("user_name")))
+                .setBody(simple("No files in your document archive have been changed"))
+                .to("freemarker:/email-templates/verify_ok.ftl");
     }
 
     public boolean error(Object body) {
-        return !fileName.equals("");
+        System.out.println("CORRUPTED FILE -> " + fileName);
+        return fileName.equals("");
     }
 
     public void start(String fileName) throws Exception {
@@ -64,6 +71,6 @@ public class HashNotification extends RouteBuilder {
     }
 
     public void start() throws Exception {
-        this.start(null);
+        this.start("");
     }
 }

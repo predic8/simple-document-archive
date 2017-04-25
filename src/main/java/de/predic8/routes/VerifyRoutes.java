@@ -35,6 +35,7 @@ public class VerifyRoutes extends RouteBuilder {
                             .log("--> OK <--")
                             .process(exc -> VerifyRoutes.lastHash = (String) exc.getProperty("docHash"))
                             .process(exc -> VerifyRoutes.isValid = true)
+                            .process(exc -> VerifyRoutes.corruptedFile = "")
                     .endChoice()
                         .otherwise()
                             .log("ERROR -> " + lastHash)
@@ -57,7 +58,7 @@ public class VerifyRoutes extends RouteBuilder {
                             HashNotification ok = new HashNotification();
                             ok.start();
                         } else {
-                            System.out.println("RUNNING ERROR");
+                            System.out.println("RUNNING ERROR -> " + corruptedFile);
                             getFirst = true;
                             HashNotification error = new HashNotification();
                             error.start(corruptedFile);
