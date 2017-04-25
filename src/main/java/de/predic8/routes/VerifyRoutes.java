@@ -16,8 +16,6 @@ public class VerifyRoutes extends RouteBuilder {
     public static boolean getFirst = true;
     public static String corruptedFile = "";
 
-    // TODO sendet falsche mail raus
-
     public void configure() throws Exception {
 
         from("file:document-archive/logs?fileName=log.txt&noop=true")
@@ -49,16 +47,11 @@ public class VerifyRoutes extends RouteBuilder {
                             })
                         .end()
                 .end()
-                .process(exc -> {
-                    System.out.println("ende der verify route" + isValid);
-                })
                 .to("direct:valid");
 
         from("direct:valid")
                 .onCompletion()
                     .process(exc -> {
-                        System.out.println("beginn direct: " + isValid);
-                        System.out.println("DOCNAME: " + corruptedFile);
                         if (isValid) {
                             System.out.println("RUNNING OK");
                             HashNotification ok = new HashNotification();
@@ -78,7 +71,7 @@ public class VerifyRoutes extends RouteBuilder {
         CamelContext ctx = new DefaultCamelContext();
         ctx.addRoutes(new VerifyRoutes());
         ctx.start();
-        Thread.sleep(10000);
+        //Thread.sleep(10000);
     }
 
     public static void main(String[] args) throws Exception {
