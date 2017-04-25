@@ -9,8 +9,10 @@ public class DailyMail extends RouteBuilder {
     public void configure() throws Exception {
         // cron: at 10:00 pm
         //from("quartz2://notify?cron=0+0+22+*+*+?")
-        from("quartz2://notify?cron=0+0/10+*+*+*+?") // every 10 minutes
+        //from("quartz2://notify?cron=0+0/10+*+*+*+?") // every 10 minutes
         //from("quartz2://notify?cron=0+*+*+*+*+?")
+        from("quartz2://notify?cron=0+0+21+?+*+*+*")
+                // at 21:00 every day
                 .process(exchange -> {
                     DailyMailNotification notify = new DailyMailNotification();
                     System.out.println("Sending daily mail...");
