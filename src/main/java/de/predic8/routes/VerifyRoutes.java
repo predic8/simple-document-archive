@@ -71,7 +71,7 @@ public class VerifyRoutes extends RouteBuilder {
         CamelContext ctx = new DefaultCamelContext();
         ctx.addRoutes(new VerifyRoutes());
         ctx.start();
-        //Thread.sleep(10000);
+        Thread.sleep(10000);
     }
 
     public static void main(String[] args) throws Exception {
