@@ -16,6 +16,8 @@ public class VerifyRoutes extends RouteBuilder {
     public static boolean getFirst = true;
     public static String corruptedFile = "";
 
+
+    // TODO file doesn't exists or is removed?
     public void configure() throws Exception {
 
         from("file:document-archive/logs?fileName=log.txt&noop=true")
