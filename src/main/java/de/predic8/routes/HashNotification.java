@@ -5,6 +5,7 @@ import de.predic8.util.PropertyFile;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Predicate;
+import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
@@ -31,10 +32,10 @@ public class HashNotification extends RouteBuilder {
                         , PropertyFile.getInstance().getProperty("email_recipient")
                         , PropertyFile.getInstance().getProperty("email_username")));
 
-        Predicate error = exchangeProperty("OK").isNotNull();
+        Predicate error = PredicateBuilder.constant(!fileName.isEmpty());
 
         from("file:document-archive/logs?fileName=log.txt&noop=true")
-                .log("Predicate: " + error)
+                .log("Predicate: " + error.toString())
                 .choice()
                     .when(error)
                         .log("SENDING HASH ERROR MAIL")
