@@ -12,6 +12,11 @@ import java.io.File;
 public class VerifyRoutes extends RouteBuilder {
     // TODO try to remove this static var
     public static String lastHash = "123";
+    public static boolean isValid;
+    public static boolean getFirst = true;
+    public static String corruptedFile = "";
+
+    // TODO sendet falsche mail raus
 
     public void configure() throws Exception {
 
@@ -31,30 +36,53 @@ public class VerifyRoutes extends RouteBuilder {
                         .when(exchangeProperty("entry").isEqualTo(exchangeProperty("docHash")))
                             .log("--> OK <--")
                             .process(exc -> VerifyRoutes.lastHash = (String) exc.getProperty("docHash"))
-                            .to("direct:valid")
+                            .process(exc -> VerifyRoutes.isValid = true)
                     .endChoice()
                         .otherwise()
                             .log("ERROR -> " + lastHash)
+                            .process(exc -> VerifyRoutes.isValid = false)
                             .process(exchange -> {
-                                HashNotification errorNotify = new HashNotification();
-                                errorNotify.start((String) exchange.getProperty("docName"));
+                                if (getFirst) {
+                                    corruptedFile = (String) exchange.getProperty("docName");
+                                    getFirst = false;
+                                }
                             })
                         .end()
-                .end();
+                .end()
+                .process(exc -> {
+                    System.out.println("ende der verify route" + isValid);
+                })
+                .to("direct:valid");
 
         from("direct:valid")
                 .onCompletion()
                     .process(exc -> {
-                        HashNotification ok = new HashNotification();
-                        ok.start();
+                        System.out.println("beginn direct: " + isValid);
+                        System.out.println("DOCNAME: " + corruptedFile);
+                        if (isValid) {
+                            System.out.println("RUNNING OK");
+                            HashNotification ok = new HashNotification();
+                            ok.start();
+                        } else {
+                            System.out.println("RUNNING ERROR");
+                            getFirst = true;
+                            HashNotification error = new HashNotification();
+                            error.start(corruptedFile);
+                        }
                     })
                 .end()
-                .log("EVERYTHING OK");
+                .log("VERIFYROUTE END");
     }
 
     public void start() throws Exception {
         CamelContext ctx = new DefaultCamelContext();
         ctx.addRoutes(new VerifyRoutes());
         ctx.start();
+        Thread.sleep(10000);
+    }
+
+    public static void main(String[] args) throws Exception {
+        VerifyRoutes v = new VerifyRoutes();
+        v.start();
     }
 }
