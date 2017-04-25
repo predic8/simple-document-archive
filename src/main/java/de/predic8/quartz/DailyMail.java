@@ -10,7 +10,6 @@ public class DailyMail extends RouteBuilder {
         // cron: at 10:00 pm
         //from("quartz2://notify?cron=0+0+22+*+*+?")
         from("quartz2://notify?cron=0+0/10+*+*+*+?") // every 10 minutes
-                //*/5 * * * *
         //from("quartz2://notify?cron=0+*+*+*+*+?")
                 .process(exchange -> {
                     DailyMailNotification notify = new DailyMailNotification();
