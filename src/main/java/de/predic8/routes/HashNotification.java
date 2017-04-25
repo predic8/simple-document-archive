@@ -11,7 +11,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 
 public class HashNotification extends RouteBuilder {
 
-    private String fileName;
+    private String fileName = "";
 
     public HashNotification() {
         super();
@@ -32,7 +32,7 @@ public class HashNotification extends RouteBuilder {
                         , PropertyFile.getInstance().getProperty("email_recipient")
                         , PropertyFile.getInstance().getProperty("email_username")));
 
-        Predicate error = PredicateBuilder.constant(!fileName.isEmpty());
+        Predicate error = PredicateBuilder.constant(!fileName.equals(""));
 
         from("file:document-archive/logs?fileName=log.txt&noop=true")
                 .log("Predicate: " + error.toString())
