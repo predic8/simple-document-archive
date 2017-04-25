@@ -32,12 +32,9 @@ public class HashNotification extends RouteBuilder {
                         , PropertyFile.getInstance().getProperty("email_recipient")
                         , PropertyFile.getInstance().getProperty("email_username")));
 
-        Predicate error = PredicateBuilder.constant(!fileName.equals(""));
-
         from("file:document-archive/logs?fileName=log.txt&noop=true")
-                .log("Predicate: " + error.toString())
                 .choice()
-                    .when(error)
+                    .when(method(HashNotification.class, "error"))
                         .log("SENDING HASH ERROR MAIL")
                         .setHeader("subject", simple("Hash Error Detected"))
                         .setHeader("firstName", simple(PropertyFile.getInstance().getProperty("user_name")))
@@ -53,6 +50,10 @@ public class HashNotification extends RouteBuilder {
                 .process(new AttachLogfile())
                 .to(smtp)
                 .log("HASH MAIL SEND");
+    }
+
+    public boolean error(Object body) {
+        return !fileName.equals("");
     }
 
     public void start(String fileName) throws Exception {
