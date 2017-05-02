@@ -1,0 +1,88 @@
+def imageName = 'p8/document-archive'
+project.ext.imageName = imageName
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-docker-plugin:3.0.3'
+    }
+}
+
+apply plugin: 'com.bmuschko.docker-remote-api'
+
+if (new File("dockerimage.gradle").exists()) {
+	apply from: "dockerimage.gradle"
+} else {
+	apply from: "../dockerimage.gradle"
+}
+
+task copyShell(type: Copy) {
+	from project.projectDir
+	into "${project.buildDir}/generated"
+	include '*.xml'
+    include 'src'
+}
+
+task createDockerfile(type: com.bmuschko.gradle.docker.tasks.image.Dockerfile) {
+	dependsOn copyShell
+    destFile = project.file("${project.buildDir}/generated/Dockerfile")
+	destFile.parentFile.mkdirs()
+    from 'anapsix/alpine-java:8_jdk'
+    runCommand ('echo "http://dl-4.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories')
+    runCommand('apk add -U maven')
+    runCommand('mkdir -p /usr/src/app')
+    addFile('.', '/usr/src/app')
+    workingDir('/usr/src/app')
+    runCommand('mvn -q install')
+    runCommand('mv target/document-archive.jar .')
+    runCommand('rm -r src/ target/ pom.xml')
+    entryPoint('java', '-jar', 'document-archive.jar')
+}
+
+dockerBase {
+	dir file("${project.buildDir}/generated")
+}
+
+afterEvaluate {
+	testDockerImage.dependsOn dockerPushImage
+}
+
+def deploymentName = 'p8-document-archive'
+project.ext.deploymentName = deploymentName
+
+task testDockerImage() {
+	doLast {
+	}
+}
+
+if (new File("deployment.gradle").exists()) {
+	apply from: "deployment.gradle"
+} else {
+	apply from: "../deployment.gradle"
+}
+
+deployment {
+	descriptor([
+			kind: "Deployment",
+			apiVersion: "extensions/v1beta1",
+			metadata: [ name: "$deploymentName" ],
+			spec: [
+				template: [
+					metadata: [ labels: [ app: "$deploymentName" ] ],
+					spec: [
+						containers: [ [
+							image: "hub.predic8.de/${imageName}:${project.ext.version}",
+							name: "${deploymentName}",
+						] ],
+						imagePullSecrets: [ [
+							name: "p8-hub-credentials"
+						]]
+					]
+				]
+			]
+		])
+	clusterUrl "https://congo.predic8.de:8443"
+}
