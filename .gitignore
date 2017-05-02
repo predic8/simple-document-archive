@@ -42,3 +42,5 @@ document-archive/
 .mvn/
 mvnw
 mvnw.cmd
+
+.gradle/

@@ -21,7 +21,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<jdk.version>1.8</jdk.version>
+		<java.version>1.8</java.version>
 	</properties>
 
 	<dependencies>
@@ -39,25 +39,25 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-core</artifactId>
-			<version>LATEST</version>
+			<version>2.18.3</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-quartz2</artifactId>
-			<version>LATEST</version>
+			<version>2.18.3</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-freemarker</artifactId>
-			<version>LATEST</version>
+			<version>2.18.3</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-mail</artifactId>
-			<version>LATEST</version>
+			<version>2.18.3</version>
 		</dependency>
 		<!--
 		<dependency>
@@ -74,8 +74,20 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>
+								repackage
+							</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>de.predic8.Archive</mainClass>
+				</configuration>
 			</plugin>
-
+			<!--
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -121,6 +133,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			-->
 		</plugins>
 	</build>
 

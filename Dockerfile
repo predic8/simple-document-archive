@@ -1,4 +1,4 @@
-FROM anapsix/alpine-java:jdk
+FROM anapsix/alpine-java:8_jdk
 
 RUN apk update && apk add libstdc++ curl docker wget
 
@@ -14,7 +14,7 @@ ENV PATH=/opt/gradle/bin:$PATH
 
 WORKDIR /app
 
-RUN wget -nv https://storage.googleapis.com/kubernetes-release/release/v1.6.1/bin/linux/amd64/kubectl
+RUN wget -nv https://storage.googleapis.com/kubernetes-release/release/v1.6.2/bin/linux/amd64/kubectl
 
 
 RUN chmod +x kubectl

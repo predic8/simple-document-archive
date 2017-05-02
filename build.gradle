@@ -7,7 +7,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.bmuschko:gradle-docker-plugin:3.0.3'
+        classpath 'com.bmuschko:gradle-docker-plugin:3.0.6'
     }
 }
 
@@ -23,7 +23,7 @@ task copyShell(type: Copy) {
 	from project.projectDir
 	into "${project.buildDir}/generated"
 	include '*.xml'
-    include 'src'
+    include 'src/**'
 }
 
 task createDockerfile(type: com.bmuschko.gradle.docker.tasks.image.Dockerfile) {
@@ -31,15 +31,16 @@ task createDockerfile(type: com.bmuschko.gradle.docker.tasks.image.Dockerfile) {
     destFile = project.file("${project.buildDir}/generated/Dockerfile")
 	destFile.parentFile.mkdirs()
     from 'anapsix/alpine-java:8_jdk'
-    runCommand ('echo "http://dl-4.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories')
-    runCommand('apk add -U maven')
+    runCommand('wget http://ftp.halifax.rwth-aachen.de/apache/maven/maven-3/3.5.0/binaries/apache-maven-3.5.0-bin.zip')
+    runCommand('unzip apache-maven-3.5.0-bin.zip')
+    runCommand('ln -s /apache-maven-3.5.0/bin/mvn /usr/bin/mvn')
     runCommand('mkdir -p /usr/src/app')
     addFile('.', '/usr/src/app')
     workingDir('/usr/src/app')
-    runCommand('mvn -q install')
+    runCommand('mvn clean install')
     runCommand('mv target/document-archive.jar .')
     runCommand('rm -r src/ target/ pom.xml')
-    entryPoint('java', '-jar', 'document-archive.jar')
+    defaultCommand('java', '-jar', 'document-archive.jar')
 }
 
 dockerBase {
