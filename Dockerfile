@@ -1,10 +1,23 @@
-FROM maven:3.5.0-jdk-8-alpine
+FROM anapsix/alpine-java:jdk
 
-COPY . /usr/src/app
-WORKDIR /usr/src/app
+RUN apk update && apk add libstdc++ curl docker wget
 
-RUN mvn install
-RUN mv target/document-archive.jar .
-RUN rm -r src/ target/ pom.xml README.md LICENSE
+RUN mkdir -p /{app,opt}
 
-CMD java -jar document-archive.jar
+RUN curl -sS -L -o /gradle.zip http://services.gradle.org/distributions/gradle-3.5-bin.zip && \
+	cd /opt && \
+	unzip /gradle.zip && \
+	ln -s /opt/gradle* /opt/gradle && \
+	rm /gradle.zip
+
+ENV PATH=/opt/gradle/bin:$PATH
+
+WORKDIR /app
+
+RUN wget -nv https://storage.googleapis.com/kubernetes-release/release/v1.6.1/bin/linux/amd64/kubectl
+
+
+RUN chmod +x kubectl
+RUN mv kubectl /usr/bin
+ADD .kube /root/.kube/
+ADD . /app/
