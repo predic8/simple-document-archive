@@ -24,6 +24,9 @@ task copyShell(type: Copy) {
 	into "${project.buildDir}/generated"
 	include '*.xml'
     include 'src/**'
+
+	println "Test: " + System.env["APPLICATION_PROPERTIES"]
+	new File("src/main/resources/application.properties").text = System.env["APPLICATION_PROPERTIES"]
 }
 
 task createDockerfile(type: com.bmuschko.gradle.docker.tasks.image.Dockerfile) {
@@ -77,7 +80,18 @@ deployment {
 						containers: [ [
 							image: "hub.predic8.de/${imageName}:${project.ext.version}",
 							name: "${deploymentName}",
+							volumeMounts: [[
+								name: "diskstation-da",
+								mountPath: "/usr/src/app/document-archive"
+							]]
 						] ],
+						volumes: [[
+							name: "diskstation-da",
+							nfs: [
+								server: "diskstation.predic8.de",
+								path: "/volume2/backup/cloud/prod/da"
+							]
+						]],
 						imagePullSecrets: [ [
 							name: "p8-hub-credentials"
 						]]
