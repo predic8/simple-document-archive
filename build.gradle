@@ -36,7 +36,7 @@ task createDockerfile(type: com.bmuschko.gradle.docker.tasks.image.Dockerfile) {
     runCommand('mkdir -p /usr/src/app')
     addFile('.', '/usr/src/app')
     workingDir('/usr/src/app')
-    runCommand('mvn install')
+    runCommand('mvn package')
     runCommand('mv target/document-archive.jar .')
     runCommand('rm -r src/ target/ pom.xml')
     entryPoint('java', '-jar', 'document-archive.jar')
