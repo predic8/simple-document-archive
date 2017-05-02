@@ -10,10 +10,11 @@ public class Verify extends RouteBuilder {
         //http://www.freeformatter.com/cron-expression-generator-quartz.html
         // cron: every hour
         //from("quartz2://verify?cron=0+0+*+*+*+?")
-        //from("quartz2://verify?cron=0+0/15+*+*+*+?") // every 15 min
+        from("quartz2://verify?cron=0+0/1+*+*+*+?") // every 1 min
         //from("quartz2://verify?cron=30+*+*+*+*+?")
-        from("quartz2://verify?cron=0+0+15+?+*+SUN+*")
+        //from("quartz2://verify?cron=0+0+15+?+*+SUN+*")
                 // at 15:00 on every Sunday
+                .routeId("Verify Quartz")
                 .process(exchange -> {
                     VerifyRoutes verify = new VerifyRoutes();
                     verify.lastHash = "123";

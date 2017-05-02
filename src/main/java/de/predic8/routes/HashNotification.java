@@ -9,9 +9,13 @@ import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
-public class HashNotification extends RouteBuilder {
+import static org.apache.camel.builder.PredicateBuilder.and;
+import static org.apache.camel.builder.PredicateBuilder.not;
 
+public class HashNotification extends RouteBuilder {
+    // TODO method/ object/ instance variable mess
     private static String fileName = "";
+    private static boolean found = false;
 
     public HashNotification() {
         super();
@@ -19,6 +23,11 @@ public class HashNotification extends RouteBuilder {
 
     public HashNotification(String fileName) {
         this.fileName = fileName;
+    }
+
+    public HashNotification(String fileName, boolean found) {
+        this.fileName = fileName;
+        this.found = found;
     }
 
     @Override
@@ -32,10 +41,16 @@ public class HashNotification extends RouteBuilder {
                         , PropertyFile.getInstance().getProperty("email_recipient")
                         , PropertyFile.getInstance().getProperty("email_username")));
 
+        Predicate noHashError = method(HashNotification.class, "noError");
+        Predicate notFound = method(HashNotification.class, "fileFound");
+
         from("file:document-archive/logs?fileName=log.txt&noop=true")
+                .routeId("HashNotificationChoice")
                 .choice()
-                    .when(method(HashNotification.class, "error"))
+                    .when(noHashError)
                         .to("direct:everythingOk")
+                    .when(notFound)
+                        .to("direct:fileNotFound")
                     .otherwise()
                         .to("direct:hashError")
                 .end()
@@ -43,7 +58,16 @@ public class HashNotification extends RouteBuilder {
                 .to(smtp)
                 .log("HASH MAIL SEND");
 
+        from("direct:fileNotFound")
+                .routeId("filenotFound")
+                .log("SENDING FILE NOT FOUND")
+                .setHeader("subject", simple("File is missing!"))
+                .setHeader("firstName", simple(PropertyFile.getInstance().getProperty("user_name")))
+                .setBody(simple(fileName))
+                .to("freemarker:/email-templates/file_not_found.ftl");
+
         from("direct:hashError")
+                .routeId("hashError")
                 .log("SENDING HASH ERROR MAIL")
                 .setHeader("subject", simple("Hash Error Detected"))
                 .setHeader("firstName", simple(PropertyFile.getInstance().getProperty("user_name")))
@@ -51,6 +75,7 @@ public class HashNotification extends RouteBuilder {
                 .to("freemarker:/email-templates/verify_fail.ftl");
 
         from("direct:everythingOk")
+                .routeId("everythingOK")
                 .log("SENDING EVERYTHING OK MAIL")
                 .setHeader("subject", simple("Everything OK!"))
                 .setHeader("firstName", simple(PropertyFile.getInstance().getProperty("user_name")))
@@ -58,9 +83,20 @@ public class HashNotification extends RouteBuilder {
                 .to("freemarker:/email-templates/verify_ok.ftl");
     }
 
-    public boolean error(Object body) {
+    public boolean noError(Object body) {
         System.out.println("CORRUPTED FILE -> " + fileName);
-        return fileName.equals("");
+        return (fileName.equals("") && !found);
+    }
+
+    public boolean fileFound(Object body) {
+        return (found && !fileName.equals(""));
+    }
+
+    public void start(String fileName, boolean found) throws Exception {
+        CamelContext ctx = new DefaultCamelContext();
+        ctx.addRoutes(new HashNotification(fileName, found));
+        ctx.start();
+        Thread.sleep(5000);
     }
 
     public void start(String fileName) throws Exception {
