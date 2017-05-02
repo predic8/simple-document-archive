@@ -11,7 +11,7 @@ public class ArchiverRoutes extends RouteBuilder {
     public void configure() throws Exception {
         //from("file:document-archive/in?noop=true").routeId("Archiver")
         from("file:document-archive/in").routeId("Archiver")
-                .setProperty("fileName").simple("/${date:now:yyyy}/${date:now:MM}/${date:now:HH-mm-ss-ms}_${in.header.CamelFileName}")
+                .setProperty("fileName").simple("/${date:now:yyyy}/${date:now:MM}/${date:now:HH-mm-ss-S}_${in.header.CamelFileName}")
                 .process(new NormalizeFileName())
                 .process(new CreateMessageDigest())
                 .to("file:document-archive/archive?fileName=${property.fileName}")

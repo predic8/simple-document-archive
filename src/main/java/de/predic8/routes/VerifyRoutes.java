@@ -4,10 +4,12 @@ import de.predic8.util.AddHashedBodyToDigest;
 import de.predic8.util.AddVerifyProperties;
 import de.predic8.util.CreateMessageDigest;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 public class VerifyRoutes extends RouteBuilder {
     // TODO try to remove this static var
@@ -20,13 +22,23 @@ public class VerifyRoutes extends RouteBuilder {
     // TODO file doesn't exists or is removed?
     public void configure() throws Exception {
 
-        from("file:document-archive/logs?fileName=log.txt&noop=true")
+        from("file:document-archive/logs?fileName=log.txt&noop=true").routeId("verify")
                 .split(body().tokenize("\n"))
                     .process(new AddVerifyProperties())
-                    .process(exchange -> {
-                        File file = new File(String.format("document-archive/archive/%s"
-                            , exchange.getProperty("docName")));
-                        exchange.getIn().setBody(file);
+                    .process((Exchange exchange) -> {
+                        String fileName = String.format("document-archive/archive/%s"
+                                , exchange.getProperty("docName"));
+                        File file = new File(fileName);
+                        if (!file.exists()) {
+                            HashNotification notfound = new HashNotification(fileName, true);
+                            notfound.start(fileName, true);
+                            //getContext().stopRoute("verify", 1, TimeUnit.SECONDS);
+                            exchange.getContext().getShutdownStrategy().setLogInflightExchangesOnTimeout(false);
+                            exchange.getContext().getShutdownStrategy().setTimeout(1);
+                            exchange.getContext().stop();
+                        } else {
+                            exchange.getIn().setBody(file);
+                        }
                     })
                     .process(new CreateMessageDigest())
                     .process(exc -> exc.getIn().setBody(VerifyRoutes.lastHash))
