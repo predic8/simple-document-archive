@@ -2,8 +2,8 @@ package de.predic8;
 
 import de.predic8.quartz.DailyMail;
 import de.predic8.quartz.Verify;
-import de.predic8.util.PropertyFile;
 import org.apache.camel.main.Main;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
