@@ -72,11 +72,9 @@ node {
       ]
     ]
   ) {
-      sh "set +x"
       sh "docker ps -a | grep $containerName | awk '{print \$1}' | xargs --no-run-if-empty docker rm -f"
       String properties = sh returnStdout: true, script: 'cat $APPLICATION_PROPERTIES'
-      sh "docker run --name $containerName -d -v /var/run/docker.sock:/var/run/docker.sock -e HUB_USER=$HUB_USER -e HUB_PASSWORD=$HUB_PASSWORD -e APPLICATION_PROPERTIES='$properties' $tempImageName sleep 1000000"
-      sh "set -x"
+      sh "docker run --name $containerName -d -v /var/run/docker.sock:/var/run/docker.sock -v $APPLICATION_PROPERTIES:/properties -e HUB_USER=$HUB_USER -e HUB_PASSWORD=$HUB_PASSWORD -e APPLICATION_PROPERTIES='$properties' $tempImageName sleep 1000000"
    }
 }
 

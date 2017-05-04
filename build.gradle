@@ -1,3 +1,5 @@
+import com.sun.xml.internal.fastinfoset.tools.FI_DOM_Or_XML_DOM_SAX_SAXEvent
+
 def imageName = 'p8/document-archive'
 project.ext.imageName = imageName
 
@@ -25,7 +27,8 @@ task copyShell(type: Copy) {
 	include '*.xml'
     include 'src/**'
 
-	new File("src/main/resources/application.properties").text = System.env["APPLICATION_PROPERTIES"]
+	//new File("src/main/resources/application.properties").text = System.env["APPLICATION_PROPERTIES"]
+	new File("src/main/resources/application.properties").text = new File("/properties").text
 }
 
 task createDockerfile(type: com.bmuschko.gradle.docker.tasks.image.Dockerfile) {
