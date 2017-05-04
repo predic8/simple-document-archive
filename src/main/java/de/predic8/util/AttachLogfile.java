@@ -1,11 +1,9 @@
 package de.predic8.util;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultAttachment;
 
-import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 
 public class AttachLogfile implements Processor{

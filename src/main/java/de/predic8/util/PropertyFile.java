@@ -1,8 +1,6 @@
 package de.predic8.util;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 public class PropertyFile {
@@ -15,7 +13,7 @@ public class PropertyFile {
         properties.load(getClass().getClassLoader().getResourceAsStream("application.properties"));
     }
 
-    public static PropertyFile getInstance() {
+    public static String getInstance(String key) {
         if (INSTANCE == null) {
             try {
                 INSTANCE = new PropertyFile();
@@ -23,10 +21,6 @@ public class PropertyFile {
                 e.printStackTrace();
             }
         }
-        return INSTANCE;
-    }
-
-    public String getProperty(String key) {
-        return properties.getProperty(key);
+        return INSTANCE.properties.getProperty(key);
     }
 }

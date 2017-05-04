@@ -1,11 +1,12 @@
 package de.predic8.util;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 
 import java.io.*;
 import java.nio.charset.Charset;
 
-public class EmailNewFiles implements org.apache.camel.Processor {
+public class EmailNewFiles implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
@@ -14,9 +15,9 @@ public class EmailNewFiles implements org.apache.camel.Processor {
         StringBuilder logtxt = new StringBuilder();
         int count = 0;
 
-        try (
-                BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("document-archive/notify/new_files.txt"), Charset.forName("UTF-8")));
-        ) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(
+                new FileInputStream("document-archive/notify/new_files.txt"), Charset.forName("UTF-8")))) {
+
             while ((currentLine = br.readLine()) != null) {
                 logtxt.append(currentLine);
                 logtxt.append(System.getProperty("line.separator"));
@@ -26,9 +27,7 @@ public class EmailNewFiles implements org.apache.camel.Processor {
             exchange.getIn().setHeader("fileCount", count);
             exchange.getIn().setBody(logtxt.toString());
 
-            try (
-                    PrintWriter writer = new PrintWriter(new File("document-archive/notify/new_files.txt"));
-            ) {
+            try (PrintWriter writer = new PrintWriter(new File("document-archive/notify/new_files.txt"))) {
                 writer.print("");
             }
         }
