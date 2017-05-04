@@ -83,6 +83,9 @@ deployment {
 							volumeMounts: [[
 								name: "diskstation-da",
 								mountPath: "/usr/src/app/document-archive"
+							]],
+							ports: [[
+								containerPort: 25
 							]]
 						] ],
 						volumes: [[
