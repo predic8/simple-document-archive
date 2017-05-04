@@ -1,16 +1,14 @@
 package de.predic8.routes;
 
 import de.predic8.util.*;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
 
 public class ArchiverRoutes extends RouteBuilder {
 
     public void configure() throws Exception {
         //from("file:document-archive/in?noop=true").routeId("Archiver")
-        from("file:document-archive/in").routeId("Archiver")
+        from("file:document-archive/in").routeId("ArchiverRoute")
                 .setProperty("fileName").simple("/${date:now:yyyy}/${date:now:MM}/${date:now:HH-mm-ss-S}_${in.header.CamelFileName}")
                 .process(new NormalizeFileName())
                 .process(new CreateMessageDigest())
@@ -39,11 +37,5 @@ public class ArchiverRoutes extends RouteBuilder {
                     .otherwise()
                         .setBody().simple("123")
                     .end();
-    }
-
-    public void start() throws Exception {
-        CamelContext ctx = new DefaultCamelContext();
-        ctx.addRoutes(new ArchiverRoutes());
-        ctx.start();
     }
 }
