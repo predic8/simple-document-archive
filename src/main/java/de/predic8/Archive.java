@@ -2,8 +2,8 @@ package de.predic8;
 
 import de.predic8.quartz.DailyMail;
 import de.predic8.quartz.Verify;
+import de.predic8.routes.ArchiverRoutes;
 import org.apache.camel.main.Main;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -21,7 +21,7 @@ public class Archive {
     private void boot() throws Exception {
         main = new Main();
         Thread archiver = new Thread(() -> {
-            ArchiverMain archiverMain = new ArchiverMain();
+            ArchiverMain archiverMain = new ArchiverMain(main);
             try {
                 archiverMain.boot();
             } catch (Exception e) { e.printStackTrace(); }
@@ -31,5 +31,19 @@ public class Archive {
         main.addRouteBuilder(new Verify());
         System.out.println("Starting... Use CTRL + C to terminate!");
         main.run();
+    }
+
+    private class ArchiverMain {
+
+        private Main main;
+
+        public ArchiverMain(Main main) {
+            this.main = main;
+        }
+
+        public void boot() throws Exception {
+            main.addRouteBuilder(new ArchiverRoutes());
+            main.run();
+        }
     }
 }
