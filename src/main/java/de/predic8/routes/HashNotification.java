@@ -35,11 +35,11 @@ public class HashNotification extends RouteBuilder {
 
         Endpoint smtp = getContext().getEndpoint(
                 String.format("smtp://%s?password=%s&username=%s&to=%s&from=%s"
-                        , PropertyFile.getInstance().getProperty("email_smtp")
-                        , PropertyFile.getInstance().getProperty("email_password")
-                        , PropertyFile.getInstance().getProperty("email_username")
-                        , PropertyFile.getInstance().getProperty("email_recipient")
-                        , PropertyFile.getInstance().getProperty("email_username")));
+                        , PropertyFile.getInstance("email_smtp")
+                        , PropertyFile.getInstance("email_password")
+                        , PropertyFile.getInstance("email_username")
+                        , PropertyFile.getInstance("email_recipient")
+                        , PropertyFile.getInstance("email_username")));
 
         Predicate noHashError = method(HashNotification.class, "noError");
         Predicate notFound = method(HashNotification.class, "fileFound");
@@ -62,7 +62,7 @@ public class HashNotification extends RouteBuilder {
                 .routeId("filenotFound")
                 .log("SENDING FILE NOT FOUND")
                 .setHeader("subject", simple("File is missing!"))
-                .setHeader("firstName", simple(PropertyFile.getInstance().getProperty("user_name")))
+                .setHeader("firstName", simple(PropertyFile.getInstance("user_name")))
                 .setBody(simple(fileName))
                 .to("freemarker:/email-templates/file_not_found.ftl");
 
@@ -70,7 +70,7 @@ public class HashNotification extends RouteBuilder {
                 .routeId("hashError")
                 .log("SENDING HASH ERROR MAIL")
                 .setHeader("subject", simple("Hash Error Detected"))
-                .setHeader("firstName", simple(PropertyFile.getInstance().getProperty("user_name")))
+                .setHeader("firstName", simple(PropertyFile.getInstance("user_name")))
                 .setBody(simple(fileName))
                 .to("freemarker:/email-templates/verify_fail.ftl");
 
@@ -78,7 +78,7 @@ public class HashNotification extends RouteBuilder {
                 .routeId("everythingOK")
                 .log("SENDING EVERYTHING OK MAIL")
                 .setHeader("subject", simple("Everything OK!"))
-                .setHeader("firstName", simple(PropertyFile.getInstance().getProperty("user_name")))
+                .setHeader("firstName", simple(PropertyFile.getInstance("user_name")))
                 .setBody(simple("No files in your document archive have been changed"))
                 .to("freemarker:/email-templates/verify_ok.ftl");
     }

@@ -9,7 +9,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
 import java.io.File;
-import java.util.concurrent.TimeUnit;
 
 public class VerifyRoutes extends RouteBuilder {
     // TODO try to remove this static var

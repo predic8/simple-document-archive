@@ -16,16 +16,16 @@ public class DailyMailNotification extends RouteBuilder {
 
         Endpoint smtp = getContext().getEndpoint(
                 String.format("smtp://%s?password=%s&username=%s&to=%s&from=%s"
-                    , PropertyFile.getInstance().getProperty("email_smtp")
-                    , PropertyFile.getInstance().getProperty("email_password")
-                    , PropertyFile.getInstance().getProperty("email_username")
-                    , PropertyFile.getInstance().getProperty("email_recipient")
-                    , PropertyFile.getInstance().getProperty("email_username")));
+                    , PropertyFile.getInstance("email_smtp")
+                    , PropertyFile.getInstance("email_password")
+                    , PropertyFile.getInstance("email_username")
+                    , PropertyFile.getInstance("email_recipient")
+                    , PropertyFile.getInstance("email_username")));
 
         from("file:document-archive/notify?fileName=new_files.txt&noop=true").routeId("DailyNotify")
                 .log("SENDING EMAIL")
                 .setHeader("subject", simple("Daily Report"))
-                .setHeader("firstName", simple(PropertyFile.getInstance().getProperty("user_name")))
+                .setHeader("firstName", simple(PropertyFile.getInstance("user_name")))
                 .process(new EmailNewFiles())
                 .to("freemarker:/email-templates/daily_report.ftl")
                 .process(new AttachLogfile())
