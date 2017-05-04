@@ -28,7 +28,6 @@ task copyShell(type: Copy) {
     include 'src/**'
 
 	//new File("src/main/resources/application.properties").text = System.env["APPLICATION_PROPERTIES"]
-	sleep(10000000)
 	new File("src/main/resources/application.properties").text = new File("/properties.txt").text
 }
 
