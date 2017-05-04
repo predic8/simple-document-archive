@@ -25,7 +25,6 @@ task copyShell(type: Copy) {
 	include '*.xml'
     include 'src/**'
 
-	println "Test: " + System.env["APPLICATION_PROPERTIES"]
 	new File("src/main/resources/application.properties").text = System.env["APPLICATION_PROPERTIES"]
 }
 
