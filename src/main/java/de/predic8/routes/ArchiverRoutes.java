@@ -1,41 +1,46 @@
 package de.predic8.routes;
 
+import de.predic8.Endpoints;
 import de.predic8.util.*;
-import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 
 public class ArchiverRoutes extends RouteBuilder {
 
     public void configure() throws Exception {
+
         //from("file:document-archive/in?noop=true").routeId("Archiver")
         from("file:document-archive/in").routeId("ArchiverRoute")
+                .log("Start routes/ArchiverRoutes Route")
                 .setProperty("fileName").simple("/${date:now:yyyy}/${date:now:MM}/${date:now:HH-mm-ss-S}_${in.header.CamelFileName}")
                 .process(new NormalizeFileName())
                 .process(new CreateMessageDigest())
-                .to("file:document-archive/archive?fileName=${property.fileName}")
+                .to(Endpoints.archiveFolder)
                 .to("direct:get-last-hash")
                 .process(new AddHashedBodyToDigest())
                 .setProperty("entry").simple("${date:now:yyyy-MM-dd HH:mm:ss} ${property.fileName} ${property.digest}")
                 .setBody().simple("${property.entry}\n")
                 .transform(body().append("\n"))
-                .to("file:document-archive/logs?fileExist=Append&fileName=log.txt")
-                .to("file:document-archive/notify?fileExist=Append&fileName=new_files.txt")
-                .setBody().simple("${property.entry}");
+                .to(Endpoints.logFile)
+                .to(Endpoints.notifyFile)
+                .setBody().simple("${property.entry}")
+                .log("End routes/ArchiverRoutes Route");
                 /* SEND HASH TO TWITTER
                 .to(String.format("twitter://timeline/user?consumerKey=%s&consumerSecret=%s&accessToken=%s&accessTokenSecret=%s"
-                    , Archive.properties.prop.getProperty("twitter_consumerKey")
-                    , Archive.properties.prop.getProperty("twitter_consumerSecret")
-                    , Archive.properties.prop.getProperty("twitter_accessToken")
-                    , Archive.properties.prop.getProperty("twitter_accessTokenSecret")));
+                    , PropertyFile.getInstance("twitter_consumerKey")
+                    , PropertyFile.getInstance("twitter_consumerSecret")
+                    , PropertyFile.getInstance("twitter_accessToken")
+                    , PropertyFile.getInstance("twitter_accessTokenSecret")));
                 */
 
         from("direct:get-last-hash").routeId("LastHash")
+                .log("Getting last hash")
                 .process(new LogExists())
                 .choice()
                     .when(exchangeProperty("fileExists"))
                         .process(new GetLastHash())
                     .otherwise()
                         .setBody().simple("123")
-                    .end();
+                    .end()
+                .log("Got last-hash");
     }
 }

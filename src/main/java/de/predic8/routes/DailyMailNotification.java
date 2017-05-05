@@ -1,12 +1,10 @@
 package de.predic8.routes;
 
-import de.predic8.Archive;
+import de.predic8.Endpoints;
 import de.predic8.util.AttachLogfile;
 import de.predic8.util.EmailNewFiles;
 import de.predic8.util.PropertyFile;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
@@ -14,23 +12,15 @@ public class DailyMailNotification extends RouteBuilder {
 
     public void configure() throws Exception {
 
-        Endpoint smtp = getContext().getEndpoint(
-                String.format("smtp://%s?password=%s&username=%s&to=%s&from=%s"
-                    , PropertyFile.getInstance("email_smtp")
-                    , PropertyFile.getInstance("email_password")
-                    , PropertyFile.getInstance("email_username")
-                    , PropertyFile.getInstance("email_recipient")
-                    , PropertyFile.getInstance("email_username")));
-
         from("file:document-archive/notify?fileName=new_files.txt&noop=true").routeId("DailyNotify")
-                .log("SENDING EMAIL")
+                .log("Sending DailyMail")
                 .setHeader("subject", simple("Daily Report"))
                 .setHeader("firstName", simple(PropertyFile.getInstance("user_name")))
                 .process(new EmailNewFiles())
-                .to("freemarker:/email-templates/daily_report.ftl")
+                .to(Endpoints.dailyMailFM)
                 .process(new AttachLogfile())
-                .to(smtp)
-                .log("EMAIL SEND");
+                .to(Endpoints.smtp)
+                .log("DailyMail send");
 
     }
 

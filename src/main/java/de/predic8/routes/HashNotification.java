@@ -1,19 +1,15 @@
 package de.predic8.routes;
 
+import de.predic8.Endpoints;
 import de.predic8.util.AttachLogfile;
 import de.predic8.util.PropertyFile;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
-import static org.apache.camel.builder.PredicateBuilder.and;
-import static org.apache.camel.builder.PredicateBuilder.not;
-
 public class HashNotification extends RouteBuilder {
-    // TODO method/ object/ instance variable mess
+
     private static String fileName = "";
     private static boolean found = false;
 
@@ -33,19 +29,12 @@ public class HashNotification extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
-        Endpoint smtp = getContext().getEndpoint(
-                String.format("smtp://%s?password=%s&username=%s&to=%s&from=%s"
-                        , PropertyFile.getInstance("email_smtp")
-                        , PropertyFile.getInstance("email_password")
-                        , PropertyFile.getInstance("email_username")
-                        , PropertyFile.getInstance("email_recipient")
-                        , PropertyFile.getInstance("email_username")));
-
         Predicate noHashError = method(HashNotification.class, "noError");
         Predicate notFound = method(HashNotification.class, "fileFound");
 
         from("file:document-archive/logs?fileName=log.txt&noop=true")
                 .routeId("HashNotificationChoice")
+                .log("Started sending HashNotification E-Mail")
                 .choice()
                     .when(noHashError)
                         .to("direct:everythingOk")
@@ -55,36 +44,39 @@ public class HashNotification extends RouteBuilder {
                         .to("direct:hashError")
                 .end()
                 .process(new AttachLogfile())
-                .to(smtp)
-                .log("HASH MAIL SEND");
+                .to(Endpoints.smtp)
+                .log("HashNotification E-Mail send");
 
         from("direct:fileNotFound")
                 .routeId("filenotFound")
-                .log("SENDING FILE NOT FOUND")
+                .log("Sending file not found E-Mail")
                 .setHeader("subject", simple("File is missing!"))
                 .setHeader("firstName", simple(PropertyFile.getInstance("user_name")))
                 .setBody(simple(fileName))
-                .to("freemarker:/email-templates/file_not_found.ftl");
+                .to(Endpoints.fileNotFoundFM)
+                .log("File not found E-Mail send");
 
         from("direct:hashError")
                 .routeId("hashError")
-                .log("SENDING HASH ERROR MAIL")
+                .log("Sending Hash Error E-Mail")
                 .setHeader("subject", simple("Hash Error Detected"))
                 .setHeader("firstName", simple(PropertyFile.getInstance("user_name")))
                 .setBody(simple(fileName))
-                .to("freemarker:/email-templates/verify_fail.ftl");
+                .to(Endpoints.verifyFailedFM)
+                .log("Hash Error E-Mail send");
 
         from("direct:everythingOk")
                 .routeId("everythingOK")
-                .log("SENDING EVERYTHING OK MAIL")
+                .log("Sending everything ok E-Mail")
                 .setHeader("subject", simple("Everything OK!"))
                 .setHeader("firstName", simple(PropertyFile.getInstance("user_name")))
                 .setBody(simple("No files in your document archive have been changed"))
-                .to("freemarker:/email-templates/verify_ok.ftl");
+                .to(Endpoints.verifyOkFM)
+                .log("everything ok E-Mail send");
     }
 
     public boolean noError(Object body) {
-        System.out.println("CORRUPTED FILE -> " + fileName);
+        System.out.println(fileName.equals("") ? "" : String.format("Corrupted file! -> %s", fileName));
         return (fileName.equals("") && !found);
     }
 

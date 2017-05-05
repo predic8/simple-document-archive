@@ -3,42 +3,24 @@ package de.predic8.routes;
 import de.predic8.util.AddHashedBodyToDigest;
 import de.predic8.util.AddVerifyProperties;
 import de.predic8.util.CreateMessageDigest;
+import de.predic8.util.FileExchangeConverter;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
-import java.io.File;
-
 public class VerifyRoutes extends RouteBuilder {
-    // TODO try to remove this static var
+
     public static String lastHash = "123";
     public static boolean isValid;
     public static boolean getFirst = true;
     public static String corruptedFile = "";
 
-
-    // TODO file doesn't exists or is removed?
     public void configure() throws Exception {
 
         from("file:document-archive/logs?fileName=log.txt&noop=true").routeId("verify")
                 .split(body().tokenize("\n"))
                     .process(new AddVerifyProperties())
-                    .process((Exchange exchange) -> {
-                        String fileName = String.format("document-archive/archive/%s"
-                                , exchange.getProperty("docName"));
-                        File file = new File(fileName);
-                        if (!file.exists()) {
-                            HashNotification notfound = new HashNotification(fileName, true);
-                            notfound.start(fileName, true);
-                            //getContext().stopRoute("verify", 1, TimeUnit.SECONDS);
-                            exchange.getContext().getShutdownStrategy().setLogInflightExchangesOnTimeout(false);
-                            exchange.getContext().getShutdownStrategy().setTimeout(1);
-                            exchange.getContext().stop();
-                        } else {
-                            exchange.getIn().setBody(file);
-                        }
-                    })
+                    .process(new FileExchangeConverter())
                     .process(new CreateMessageDigest())
                     .process(exc -> exc.getIn().setBody(VerifyRoutes.lastHash))
                     .process(new AddHashedBodyToDigest())
@@ -46,16 +28,18 @@ public class VerifyRoutes extends RouteBuilder {
                     .choice()
                         .when(exchangeProperty("entry").isEqualTo(exchangeProperty("docHash")))
                             .log("--> OK <--")
-                            .process(exc -> VerifyRoutes.lastHash = (String) exc.getProperty("docHash"))
-                            .process(exc -> VerifyRoutes.isValid = true)
-                            .process(exc -> VerifyRoutes.corruptedFile = "")
+                            .process(exc -> {
+                                VerifyRoutes.lastHash = (String) exc.getProperty("docHash");
+                                VerifyRoutes.isValid = true;
+                                VerifyRoutes.corruptedFile = "";
+                            })
                     .endChoice()
                         .otherwise()
-                            .log("ERROR -> " + lastHash)
-                            .process(exc -> VerifyRoutes.isValid = false)
-                            .process(exchange -> {
+                            .log(String.format("ERROR -> %S", lastHash))
+                            .process(exc -> {
+                                VerifyRoutes.isValid = false;
                                 if (getFirst) {
-                                    corruptedFile = (String) exchange.getProperty("docName");
+                                    corruptedFile = (String) exc.getProperty("docName");
                                     getFirst = false;
                                 }
                             })
@@ -67,11 +51,11 @@ public class VerifyRoutes extends RouteBuilder {
                 .onCompletion()
                     .process(exc -> {
                         if (isValid) {
-                            System.out.println("RUNNING OK");
+                            System.out.println("Run Hash OK Notification");
                             HashNotification ok = new HashNotification();
                             ok.start();
                         } else {
-                            System.out.println("RUNNING ERROR -> " + corruptedFile);
+                            System.out.printf("Run Hash Error Notification -> %s", corruptedFile);
                             getFirst = true;
                             HashNotification error = new HashNotification();
                             error.start(corruptedFile);
@@ -86,10 +70,5 @@ public class VerifyRoutes extends RouteBuilder {
         ctx.addRoutes(new VerifyRoutes());
         ctx.start();
         Thread.sleep(10000);
-    }
-
-    public static void main(String[] args) throws Exception {
-        VerifyRoutes v = new VerifyRoutes();
-        v.start();
     }
 }

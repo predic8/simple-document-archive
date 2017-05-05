@@ -9,10 +9,12 @@ public class DailyMail extends RouteBuilder {
     public void configure() throws Exception {
         from("quartz2://notify?cron=0+0+21+?+*+*+*") // at 21:00 every day
                 .routeId("Quartz: DailyMail")
+                .log("Start quartz/DailyMail Route")
                 .process(exchange -> {
                     DailyMailNotification notify = new DailyMailNotification();
                     System.out.println("Sending daily mail...");
                     notify.start();
-                });
+                })
+                .log("End quartz/DailyMail Route");
     }
 }
