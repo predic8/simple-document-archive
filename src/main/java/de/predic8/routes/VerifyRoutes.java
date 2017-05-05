@@ -53,6 +53,7 @@ public class VerifyRoutes extends RouteBuilder {
                         if (isValid) {
                             System.out.println("Run Hash OK Notification");
                             HashNotification ok = new HashNotification();
+                            ok.setFound(false);
                             ok.start();
                         } else {
                             System.out.printf("Run Hash Error Notification -> %s", corruptedFile);

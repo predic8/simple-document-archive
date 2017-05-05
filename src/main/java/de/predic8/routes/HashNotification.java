@@ -101,4 +101,8 @@ public class HashNotification extends RouteBuilder {
     public void start() throws Exception {
         this.start("");
     }
+
+    public static void setFound(boolean _found) {
+        found = _found;
+    }
 }
