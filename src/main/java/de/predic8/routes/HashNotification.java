@@ -13,12 +13,14 @@ public class HashNotification extends RouteBuilder {
     private static String fileName = "";
     private static boolean found = false;
 
-    public HashNotification() {
-        super();
-    }
+    public HashNotification() {}
 
     public HashNotification(String fileName) {
-        this.fileName = fileName;
+        this(fileName, false);
+    }
+
+    public HashNotification(boolean found) {
+        this("", found);
     }
 
     public HashNotification(String fileName, boolean found) {
@@ -84,25 +86,10 @@ public class HashNotification extends RouteBuilder {
         return (found && !fileName.equals(""));
     }
 
-    public void start(String fileName, boolean found) throws Exception {
-        CamelContext ctx = new DefaultCamelContext();
-        ctx.addRoutes(new HashNotification(fileName, found));
-        ctx.start();
-        Thread.sleep(5000);
-    }
-
-    public void start(String fileName) throws Exception {
-        CamelContext ctx = new DefaultCamelContext();
-        ctx.addRoutes(new HashNotification(fileName));
-        ctx.start();
-        Thread.sleep(5000);
-    }
-
     public void start() throws Exception {
-        this.start("");
-    }
-
-    public static void setFound(boolean _found) {
-        found = _found;
+        CamelContext ctx = new DefaultCamelContext();
+        ctx.addRoutes(this);
+        ctx.start();
+        Thread.sleep(5000);
     }
 }
