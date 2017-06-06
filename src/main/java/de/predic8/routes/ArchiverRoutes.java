@@ -36,12 +36,13 @@ public class ArchiverRoutes extends RouteBuilder {
                     .otherwise()
                         .setBody().simple("123")
                     .end();
-
+        /*
         from("direct:twitter").routeId("twitterRoute")
                 .to(String.format("twitter://timeline/user?consumerKey=%s&consumerSecret=%s&accessToken=%s&accessTokenSecret=%s"
                         , PropertyFile.getInstance("twitter_consumerKey")
                         , PropertyFile.getInstance("twitter_consumerSecret")
                         , PropertyFile.getInstance("twitter_accessToken")
                         , PropertyFile.getInstance("twitter_accessTokenSecret")));
+        */
     }
 }
