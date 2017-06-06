@@ -12,7 +12,9 @@ public class FileExchangeConverter implements Processor {
     public void process(Exchange exchange) throws Exception {
         String fileName = String.format("document-archive/archive/%s"
                 , exchange.getProperty("docName"));
+
         File file = new File(fileName);
+
         if (!file.exists()) {
             HashNotification notfound = new HashNotification(fileName, true);
             notfound.start();
