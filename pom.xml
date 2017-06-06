@@ -59,13 +59,13 @@
 			<artifactId>camel-mail</artifactId>
 			<version>2.18.3</version>
 		</dependency>
-		<!--
+
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-twitter</artifactId>
-			<version>LATEST</version>
+			<version>2.19.0</version>
 		</dependency>
-		-->
+
 	</dependencies>
 
 	<build>
