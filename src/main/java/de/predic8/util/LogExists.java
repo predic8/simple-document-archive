@@ -7,12 +7,9 @@ import java.io.File;
 
 public class LogExists implements Processor {
 
-    public void process(Exchange exchange) throws Exception {
-        File file = new File("document-archive/logs/log.txt");
-        if (file.exists()) {
-            exchange.setProperty("fileExists", true);
-        } else {
-            exchange.setProperty("fileExists", false);
-        }
+    public static final String LOG_FILE = "document-archive/logs/log.txt";
+
+    public void process(Exchange e) throws Exception {
+        e.setProperty("fileExists", new File(LOG_FILE).exists());
     }
 }
