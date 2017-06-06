@@ -1,18 +1,11 @@
 package de.predic8;
 
-import de.predic8.util.PropertyFile;
-
 public interface Endpoints {
 
     /**
      * Smtp endpoint
      */
-    String smtp = String.format("smtp://%s?password=%s&username=%s&to=%s&from=%s"
-            , PropertyFile.getInstance("email_smtp")
-            , PropertyFile.getInstance("email_password")
-            , PropertyFile.getInstance("email_username")
-            , PropertyFile.getInstance("email_recipient")
-            , PropertyFile.getInstance("email_username"));
+    String smtp = "smtp://{{email_smtp}}?password={{email_password}}&username={{email_username}}&to={{email_recipient}}&from={{email_username}}";
 
     /**
      * Files and Folder enpoints
