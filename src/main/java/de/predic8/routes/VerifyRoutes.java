@@ -11,7 +11,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 public class VerifyRoutes extends RouteBuilder {
 
     public static String lastHash = "123";
-    public static boolean isValid;
     public static boolean getFirst = true;
     public static String corruptedFile = "";
 
@@ -30,14 +29,14 @@ public class VerifyRoutes extends RouteBuilder {
                             .log("--> OK <--")
                             .process(exc -> {
                                 VerifyRoutes.lastHash = (String) exc.getProperty("docHash");
-                                VerifyRoutes.isValid = true;
+                                exc.setProperty("isValid", true);
                                 VerifyRoutes.corruptedFile = "";
                             })
                     .endChoice()
                         .otherwise()
                             .log(String.format("ERROR -> %S", lastHash))
                             .process(exc -> {
-                                VerifyRoutes.isValid = false;
+                                exc.setProperty("isValid", false);
                                 if (getFirst) {
                                     corruptedFile = (String) exc.getProperty("docName");
                                     getFirst = false;
@@ -49,19 +48,21 @@ public class VerifyRoutes extends RouteBuilder {
 
         from("direct:valid")
                 .onCompletion()
-                    .process(exc -> {
-                        if (isValid) {
-                            System.out.println("Run Hash OK Notification");
-                            HashNotification ok = new HashNotification();
-                            ok.setFound(false);
-                            ok.start();
-                        } else {
-                            System.out.printf("Run Hash Error Notification -> %s", corruptedFile);
-                            getFirst = true;
-                            HashNotification error = new HashNotification();
-                            error.start(corruptedFile);
-                        }
-                    })
+                    .choice()
+                        .when(exchangeProperty("isValid"))
+                            .process(exc -> {
+                                System.out.println("Run Hash OK Notification");
+                                HashNotification ok = new HashNotification(false);
+                                ok.start();
+                            })
+                        .otherwise()
+                            .process(exc -> {
+                                System.out.printf("Run Hash Error Notification -> %s", corruptedFile);
+                                getFirst = true;
+                                HashNotification error = new HashNotification(corruptedFile);
+                                error.start();
+                            })
+                        .end()
                 .end()
                 .log("VERIFYROUTE END");
     }
