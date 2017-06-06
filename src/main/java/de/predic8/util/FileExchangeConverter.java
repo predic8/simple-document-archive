@@ -15,7 +15,7 @@ public class FileExchangeConverter implements Processor {
         File file = new File(fileName);
         if (!file.exists()) {
             HashNotification notfound = new HashNotification(fileName, true);
-            notfound.start(fileName, true);
+            notfound.start();
             exchange.getContext().getShutdownStrategy().setLogInflightExchangesOnTimeout(false);
             exchange.getContext().getShutdownStrategy().setTimeout(1);
             exchange.getContext().stop();
