@@ -22,13 +22,10 @@ public class ArchiverRoutes extends RouteBuilder {
                 .transform(body().append("\n"))
                 .to(Endpoints.logFile)
                 .to(Endpoints.notifyFile)
-                .setBody().simple("${property.entry}");
+                .setBody().simple("${property.entry}")
+                .to("direct:twitter");
                 /* SEND HASH TO TWITTER
-                .to(String.format("twitter://timeline/user?consumerKey=%s&consumerSecret=%s&accessToken=%s&accessTokenSecret=%s"
-                    , PropertyFile.getInstance("twitter_consumerKey")
-                    , PropertyFile.getInstance("twitter_consumerSecret")
-                    , PropertyFile.getInstance("twitter_accessToken")
-                    , PropertyFile.getInstance("twitter_accessTokenSecret")));
+                .to("direct:twitter")
                 */
 
         from("direct:get-last-hash").routeId("LastHash")
@@ -39,5 +36,12 @@ public class ArchiverRoutes extends RouteBuilder {
                     .otherwise()
                         .setBody().simple("123")
                     .end();
+
+        from("direct:twitter").routeId("twitterRoute")
+                .to(String.format("twitter://timeline/user?consumerKey=%s&consumerSecret=%s&accessToken=%s&accessTokenSecret=%s"
+                        , PropertyFile.getInstance("twitter_consumerKey")
+                        , PropertyFile.getInstance("twitter_consumerSecret")
+                        , PropertyFile.getInstance("twitter_accessToken")
+                        , PropertyFile.getInstance("twitter_accessTokenSecret")));
     }
 }
