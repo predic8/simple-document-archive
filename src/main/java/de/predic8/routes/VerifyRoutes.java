@@ -7,8 +7,12 @@ import de.predic8.util.FileExchangeConverter;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.log4j.Logger;
+
 
 public class VerifyRoutes extends RouteBuilder {
+
+    final static Logger logger = Logger.getLogger(VerifyRoutes.class);
 
     public static String lastHash = "123";
     public static boolean getFirst = true;
@@ -51,13 +55,13 @@ public class VerifyRoutes extends RouteBuilder {
                     .choice()
                         .when(exchangeProperty("isValid"))
                             .process(exc -> {
-                                System.out.println("Run Hash OK Notification");
+                                logger.info("Run Hash OK Notification");
                                 HashNotification ok = new HashNotification(false);
                                 ok.start();
                             })
                         .otherwise()
                             .process(exc -> {
-                                System.out.printf("Run Hash Error Notification -> %s", corruptedFile);
+                                logger.info("Run Hash Error Notification -> " + corruptedFile);
                                 getFirst = true;
                                 HashNotification error = new HashNotification(corruptedFile);
                                 error.start();

@@ -2,13 +2,16 @@ package de.predic8.routes;
 
 import de.predic8.Endpoints;
 import de.predic8.util.AttachLogfile;
-import de.predic8.util.PropertyFile;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.log4j.Logger;
+
 
 public class HashNotification extends RouteBuilder {
+
+    final static Logger logger = Logger.getLogger(HashNotification.class);
 
     private static String fileName = "";
     private static boolean found = false;
@@ -53,7 +56,7 @@ public class HashNotification extends RouteBuilder {
                 .routeId("filenotFound")
                 .log("Sending file not found E-Mail")
                 .setHeader("subject", simple("File is missing!"))
-                .setHeader("firstName", simple(PropertyFile.getInstance("user_name")))
+                .setHeader("firstName", simple("{{user_name}}"))
                 .setBody(simple(fileName))
                 .to(Endpoints.fileNotFoundFM)
                 .log("File not found E-Mail send");
@@ -62,7 +65,7 @@ public class HashNotification extends RouteBuilder {
                 .routeId("hashError")
                 .log("Sending Hash Error E-Mail")
                 .setHeader("subject", simple("Hash Error Detected"))
-                .setHeader("firstName", simple(PropertyFile.getInstance("user_name")))
+                .setHeader("firstName", simple("{{user_name}}"))
                 .setBody(simple(fileName))
                 .to(Endpoints.verifyFailedFM)
                 .log("Hash Error E-Mail send");
@@ -71,14 +74,14 @@ public class HashNotification extends RouteBuilder {
                 .routeId("everythingOK")
                 .log("Sending everything ok E-Mail")
                 .setHeader("subject", simple("Everything OK!"))
-                .setHeader("firstName", simple(PropertyFile.getInstance("user_name")))
+                .setHeader("firstName", simple("{{user_name}}"))
                 .setBody(simple("No files in your document archive have been changed"))
                 .to(Endpoints.verifyOkFM)
                 .log("everything ok E-Mail send");
     }
 
     public boolean noError(Object body) {
-        System.out.println(fileName.equals("") ? "" : String.format("Corrupted file! -> %s", fileName));
+        logger.info(fileName.equals("") ? "" : String.format("Corrupted file! -> %s", fileName));
         return (fileName.equals("") && !found);
     }
 
