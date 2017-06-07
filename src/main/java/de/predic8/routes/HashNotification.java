@@ -1,13 +1,12 @@
 package de.predic8.routes;
 
-import de.predic8.Endpoints;
 import de.predic8.util.AttachLogfile;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.log4j.Logger;
-
 
 public class HashNotification extends RouteBuilder {
 
@@ -37,6 +36,10 @@ public class HashNotification extends RouteBuilder {
         Predicate noHashError = method(HashNotification.class, "noError");
         Predicate notFound = method(HashNotification.class, "fileFound");
 
+        PropertiesComponent pc = new PropertiesComponent();
+        pc.setLocation("classpath:application.properties");
+        getContext().addComponent("properties", pc);
+
         from("file:document-archive/logs?fileName=log.txt&noop=true")
                 .routeId("HashNotificationChoice")
                 .log("Started sending HashNotification E-Mail")
@@ -49,7 +52,7 @@ public class HashNotification extends RouteBuilder {
                         .to("direct:hashError")
                 .end()
                 .process(new AttachLogfile())
-                .to(Endpoints.smtp)
+                .to("smtp://{{email_smtp}}?password={{email_password}}&username={{email_username}}&to={{email_recipient}}&from={{email_username}}")
                 .log("HashNotification E-Mail send");
 
         from("direct:fileNotFound")
@@ -58,7 +61,7 @@ public class HashNotification extends RouteBuilder {
                 .setHeader("subject", simple("File is missing!"))
                 .setHeader("firstName", simple("{{user_name}}"))
                 .setBody(simple(fileName))
-                .to(Endpoints.fileNotFoundFM)
+                .to("freemarker:/email-templates/file_not_found.ftl")
                 .log("File not found E-Mail send");
 
         from("direct:hashError")
@@ -67,7 +70,7 @@ public class HashNotification extends RouteBuilder {
                 .setHeader("subject", simple("Hash Error Detected"))
                 .setHeader("firstName", simple("{{user_name}}"))
                 .setBody(simple(fileName))
-                .to(Endpoints.verifyFailedFM)
+                .to("freemarker:/email-templates/verify_fail.ftl")
                 .log("Hash Error E-Mail send");
 
         from("direct:everythingOk")
@@ -76,7 +79,7 @@ public class HashNotification extends RouteBuilder {
                 .setHeader("subject", simple("Everything OK!"))
                 .setHeader("firstName", simple("{{user_name}}"))
                 .setBody(simple("No files in your document archive have been changed"))
-                .to(Endpoints.verifyOkFM)
+                .to("freemarker:/email-templates/verify_ok.ftl")
                 .log("everything ok E-Mail send");
     }
 
