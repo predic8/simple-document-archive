@@ -13,7 +13,7 @@ import java.util.Calendar;
 public class ArchiverRouteTest extends CamelTestSupport {
 
     /**
-     * Test doesn't work anymore because of spring's autoconfig
+     * Test doesn't work anymore due to of spring's autoconfig
      * property placeholder.
      */
     private Calendar cal;
