@@ -1,8 +1,5 @@
 package de.predic8;
 
-import de.predic8.quartz.DailyMail;
-import de.predic8.quartz.Verify;
-import de.predic8.routes.ArchiverRoutes;
 import org.apache.camel.main.Main;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,9 +17,9 @@ public class Archive {
 
     private void boot() throws Exception {
         main = new Main();
-        main.addRouteBuilder(new ArchiverRoutes());
-        main.addRouteBuilder(new DailyMail());
-        main.addRouteBuilder(new Verify());
+        //main.addRouteBuilder(new ArchiverRoutes());
+        //main.addRouteBuilder(new DailyMail());
+        //main.addRouteBuilder(new Verify());
         System.out.println("Starting... Use CTRL + C to terminate!");
         main.run();
     }
