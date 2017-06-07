@@ -1,11 +1,13 @@
 package de.predic8.routes;
 
-import de.predic8.Endpoints;
 import de.predic8.util.*;
 import org.apache.camel.builder.RouteBuilder;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ArchiverRoutes extends RouteBuilder {
 
+    @Override
     public void configure() throws Exception {
 
         //from("file:document-archive/in?noop=true").routeId("Archiver")
@@ -14,14 +16,14 @@ public class ArchiverRoutes extends RouteBuilder {
                 .setProperty("fileName").simple("/${date:now:yyyy}/${date:now:MM}/${date:now:HH-mm-ss-S}_${in.header.CamelFileName}")
                 .process(new NormalizeFileName())
                 .process(new CreateMessageDigest())
-                .to(Endpoints.archiveFolder)
+                .to("file:document-archive/archive?fileName=${property.fileName}")
                 .to("direct:get-last-hash")
                 .process(new AddHashedBodyToDigest())
                 .setProperty("entry").simple("${date:now:yyyy-MM-dd HH:mm:ss} ${property.fileName} ${property.digest}")
                 .setBody().simple("${property.entry}\n")
                 .transform(body().append("\n"))
-                .to(Endpoints.logFile)
-                .to(Endpoints.notifyFile)
+                .to("file:document-archive/logs?fileExist=Append&fileName=log.txt")
+                .to("file:document-archive/notify?fileExist=Append&fileName=new_files.txt")
                 .setBody().simple("${property.entry}");
                 /* SEND HASH TO TWITTER
                 .to("direct:twitter")
