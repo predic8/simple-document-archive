@@ -9,8 +9,8 @@ public class DailyMail extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        //from("quartz2://notify?cron=0+0+21+?+*+*+*") // at 21:00 every day
-        from("quartz2://notify?cron=0+*+*+?+*+*+*") // every minute
+        from("quartz2://notify?cron=0+0+21+?+*+*+*") // at 21:00 every day
+        //from("quartz2://notify?cron=0+*+*+?+*+*+*") // every minute
                 .routeId("Quartz: DailyMail")
                 .log("Start quartz/DailyMail Route")
                 .log("Sending daily mail...")
