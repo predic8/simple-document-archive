@@ -9,15 +9,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.log4j.Logger;
 
-
 public class VerifyRoutes extends RouteBuilder {
 
     final static Logger logger = Logger.getLogger(VerifyRoutes.class);
 
-    public static String lastHash = "123";
-    public static boolean getFirst = true;
-    public static String corruptedFile = "";
+    public String lastHash = "123";
+    public boolean getFirst = true;
+    public String corruptedFile = "";
 
+    @Override
     public void configure() throws Exception {
 
         from("file:document-archive/logs?fileName=log.txt&noop=true").routeId("verify")
@@ -25,16 +25,16 @@ public class VerifyRoutes extends RouteBuilder {
                     .process(new AddVerifyProperties())
                     .process(new FileExchangeConverter())
                     .process(new CreateMessageDigest())
-                    .process(exc -> exc.getIn().setBody(VerifyRoutes.lastHash))
+                    .process(exc -> exc.getIn().setBody(this.lastHash))
                     .process(new AddHashedBodyToDigest())
                     .setProperty("entry").simple("${property.digest}")
                     .choice()
                         .when(exchangeProperty("entry").isEqualTo(exchangeProperty("docHash")))
                             .log("--> OK <--")
                             .process(exc -> {
-                                VerifyRoutes.lastHash = (String) exc.getProperty("docHash");
+                                this.lastHash = (String) exc.getProperty("docHash");
                                 exc.setProperty("isValid", true);
-                                VerifyRoutes.corruptedFile = "";
+                                this.corruptedFile = "";
                             })
                     .endChoice()
                         .otherwise()
