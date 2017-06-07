@@ -12,17 +12,16 @@ import java.util.Calendar;
 
 public class ArchiverRouteTest extends CamelTestSupport {
 
+    /**
+     * Test doesn't work anymore because of spring's autoconfig
+     * property placeholder.
+     */
     private Calendar cal;
     private String year, month;
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new ArchiverRoutes();
-    }
-
-    public File[] finder(String dir) {
-        File _dir = new File(dir);
-        return _dir.listFiles((dir1, name) -> name.endsWith("_test.txt"));
     }
 
     @Before
