@@ -13,9 +13,9 @@ public class VerifyRoutes extends RouteBuilder {
 
     final static Logger logger = Logger.getLogger(VerifyRoutes.class);
 
-    public String lastHash = "123";
-    public boolean getFirst = true;
-    public String corruptedFile = "";
+    private String lastHash = "123";
+    private boolean getFirst = true;
+    private String corruptedFile = "";
 
     @Override
     public void configure() throws Exception {
@@ -69,6 +69,10 @@ public class VerifyRoutes extends RouteBuilder {
                         .end()
                 .end()
                 .log("VERIFYROUTE END");
+    }
+
+    public boolean isCorrupted() {
+        return !corruptedFile.equals("");
     }
 
     public void start() throws Exception {
