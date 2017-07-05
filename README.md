@@ -3,6 +3,9 @@
 
 Create *application.properties* in *src/main/resources* containing:
 ```java
+spring.jpa.hibernate.naming-strategy=org.hibernate.cfg.DefaultNamingStrategy
+spring.jpa.hibernate.ddl-auto=create-drop
+
 user_name=
 
 # E-mail Support
