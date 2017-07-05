@@ -20,3 +20,5 @@ twitter_consumerSecret=
 twitter_accessToken=
 twitter_accessTokenSecret=
 ```
+
+![alt text](https://github.com/predic8/simple-document-archive/blob/master/image.png?raw=true)
