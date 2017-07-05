@@ -81,4 +81,9 @@ public class VerifyRoutes extends RouteBuilder {
         ctx.start();
         Thread.sleep(10000);
     }
+
+    public boolean isValid() throws Exception {
+        this.start();
+        return !isCorrupted();
+    }
 }

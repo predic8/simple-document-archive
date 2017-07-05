@@ -18,14 +18,16 @@ public class ArchivedFile {
     @GeneratedValue
     Long id;
 
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    @JsonSerialize(using = LocalDateSerializer.class)
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    //@JsonDeserialize(using = LocalDateDeserializer.class)
+    //@JsonSerialize(using = LocalDateSerializer.class)
+    //@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @Column(name = "date")
-    LocalDate date;
+    //LocalDate date;
+    String date;
 
     @Column(name = "time")
-    LocalTime time;
+    //LocalTime time;
+    String time;
 
     @Column(name = "filename")
     String fileName;
@@ -43,19 +45,19 @@ public class ArchivedFile {
         this.id = id;
     }
 
-    public LocalDate getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
-    public LocalTime getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(LocalTime time) {
+    public void setTime(String time) {
         this.time = time;
     }
 

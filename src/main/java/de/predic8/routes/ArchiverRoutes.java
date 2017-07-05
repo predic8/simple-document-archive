@@ -39,8 +39,10 @@ public class ArchiverRoutes extends RouteBuilder {
 
                     String[] properties = exchange.getProperty("entry").toString().split(" ");
 
-                    file.setDate(LocalDate.parse(properties[0], DateTimeFormatter.ofPattern("yyyy-dd-MM")));
-                    file.setTime(LocalTime.parse(properties[1], DateTimeFormatter.ofPattern("HH:mm:ss")));
+                    //file.setDate(LocalDate.parse(properties[0], DateTimeFormatter.ofPattern("yyyy-dd-MM")));
+                    //file.setTime(LocalTime.parse(properties[1], DateTimeFormatter.ofPattern("HH:mm:ss")));
+                    file.setDate(properties[0]);
+                    file.setTime(properties[1]);
                     file.setFileName(properties[2]);
                     file.setHash(properties[3]);
 
