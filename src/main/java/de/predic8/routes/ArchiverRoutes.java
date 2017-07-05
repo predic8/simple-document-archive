@@ -1,11 +1,21 @@
 package de.predic8.routes;
 
+import de.predic8.model.ArchivedFile;
+import de.predic8.service.ArchiveService;
 import de.predic8.util.*;
 import org.apache.camel.builder.RouteBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 @Component
 public class ArchiverRoutes extends RouteBuilder {
+
+    @Autowired
+    ArchiveService service;
 
     @Override
     public void configure() throws Exception {
@@ -24,6 +34,18 @@ public class ArchiverRoutes extends RouteBuilder {
                 .transform(body().append("\n"))
                 .to("file:document-archive/logs?fileExist=Append&fileName=log.txt")
                 .to("file:document-archive/notify?fileExist=Append&fileName=new_files.txt")
+                .process(exchange -> {
+                    ArchivedFile file = new ArchivedFile();
+
+                    String[] properties = exchange.getProperty("entry").toString().split(" ");
+
+                    file.setDate(LocalDate.parse(properties[0], DateTimeFormatter.ofPattern("yyyy-dd-MM")));
+                    file.setTime(LocalTime.parse(properties[1], DateTimeFormatter.ofPattern("HH:mm:ss")));
+                    file.setFileName(properties[2]);
+                    file.setHash(properties[3]);
+
+                    service.archiveFile(file);
+                })
                 .setBody().simple("${property.entry}");
                 /* SEND HASH TO TWITTER
                 .to("direct:twitter")
