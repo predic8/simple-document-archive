@@ -18,30 +18,37 @@
             <h1>Document Archive</h1>
         </div>
 
-        <div class="alert alert-info" role="alert" ng-hide="files &amp;&amp; files.length > 0">
-            There are no files yet!
+        <div>
+            <div class="alert alert-info" role="alert" ng-hide="files &amp;&amp; files.length > 0">
+                There are no files yet!
+            </div>
+
+            <div ng-show="files &amp;&amp; files.length > 0">
+                <button type="button" class="btn btn-success" ng-click="verify()">Run Verify Route</button>
+                <button type="button" class="btn btn-info" ng-click="mail()">Run Mail Route</button>
+            </div>
+
+            <div class="alert alert-warning" role="alert" ng-show="showVerifyAlert">
+                Verifying...
+            </div>
+
+            <div class="alert alert-success clickable" role="alert" ng-show="showVerifyTrue" ng-click="hideVerifyTrue()">
+                All files OK!
+            </div>
+
+            <div class="alert alert-danger clickable" role="alert" ng-show="showVerifyFalse" ng-click="hideVerifyFalse()">
+                Files Corrupted!!!
+            </div>
+
+            <div class="alert alert-info" role="alert">
+                Drag'n'Drop area for files?
+            </div>
         </div>
 
-        <div ng-show="files &amp;&amp; files.length > 0">
-            <button type="button" class="btn btn-success" ng-click="verify()">Run Verify Route</button>
-            <button type="button" class="btn btn-info" ng-click="mail()">Run Mail Route</button>
-        </div>
+        <hr />
 
-        <div class="alert alert-warning" role="alert" ng-show="showVerifyAlert">
-            Verifying...
-        </div>
-
-        <div class="alert alert-success clickable" role="alert" ng-show="showVerifyTrue" ng-click="hideVerifyTrue()">
-            All files OK!
-        </div>
-
-        <div class="alert alert-danger clickable" role="alert" ng-show="showVerifyFalse" ng-click="hideVerifyFalse()">
-            Files Corrupted!!!
-        </div>
-
-        <br>
-        <div class="alert alert-info" role="alert">
-            Drag'n'Drop area for files?
+        <div class="form-group">
+            <input type="text" class="form-control" id="searchField" placeholder="Search..." ng-model="searchArchive">
         </div>
 
         <hr />
@@ -57,7 +64,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="file in files">
+                    <tr ng-repeat="file in files | filter:searchArchive">
                         <td>{{file.date | date:'yyyy-MM-dd'}}</td>
                         <td>{{file.time | date:'HH:mm:ss'}}</td>
                         <td>{{file.fileName}}</td>
