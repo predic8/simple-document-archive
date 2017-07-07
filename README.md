@@ -3,6 +3,9 @@
 
 Create *application.properties* in *src/main/resources* containing:
 ```java
+spring.jpa.hibernate.naming-strategy=org.hibernate.cfg.DefaultNamingStrategy
+spring.jpa.hibernate.ddl-auto=create-drop
+
 user_name=
 
 # E-mail Support
@@ -17,3 +20,5 @@ twitter_consumerSecret=
 twitter_accessToken=
 twitter_accessTokenSecret=
 ```
+
+![alt text](https://github.com/predic8/simple-document-archive/blob/master/image.png?raw=true)
