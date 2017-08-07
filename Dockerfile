@@ -14,7 +14,7 @@ ENV PATH=/opt/gradle/bin:$PATH
 
 WORKDIR /app
 
-RUN bower install
+RUN npm install bower -g && bower install
 
 RUN wget -nv https://storage.googleapis.com/kubernetes-release/release/v1.6.2/bin/linux/amd64/kubectl
 
