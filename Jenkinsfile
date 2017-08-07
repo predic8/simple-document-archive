@@ -45,11 +45,6 @@ node {
         variable: 'KUBERNETES_JENKINS_KEY'
       ],
       [
-        $class: 'FileBinding',
-        credentialsId: 'da-application-properties',
-        variable: 'APPLICATION_PROPERTIES'
-      ]
-    ]
   ) {
       String text = sh returnStdout: true, script: "cat $KUBERNETES_CA"
       writeFile file: ".kube/ca.pem", text: text
