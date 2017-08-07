@@ -25,9 +25,9 @@ task copyShell(type: Copy) {
 	from project.projectDir
 	into "${project.buildDir}/generated"
 	include '*.xml'
-    include 'src/**'
+        include 'src/**'
 
-	new File("src/main/resources/application.properties").text = System.env["APPLICATION_PROPERTIES"]
+	//new File("src/main/resources/application.properties").text = System.env["APPLICATION_PROPERTIES"]
 }
 
 task createDockerfile(type: com.bmuschko.gradle.docker.tasks.image.Dockerfile) {
