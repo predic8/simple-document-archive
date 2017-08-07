@@ -81,6 +81,15 @@ deployment {
 						containers: [ [
 							image: "hub.predic8.de/${imageName}:${project.ext.version}",
 							name: "${deploymentName}",
+							env: [[
+								name: SECRET_PASSWORD,
+								valueFrom: [[
+									secretKeyRef: [[
+										name: da-secret,
+										key: password
+									]]
+								]]
+							]],
 							volumeMounts: [[
 								name: "diskstation-da",
 								mountPath: "/usr/src/app/document-archive"
