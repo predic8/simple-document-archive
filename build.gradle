@@ -86,7 +86,7 @@ deployment {
 								valueFrom: [[
 									secretKeyRef: [[
 										name: "da-secret",
-										key: password
+										key: "password"
 									]]
 								]]
 							]],
