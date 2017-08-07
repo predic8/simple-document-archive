@@ -1,6 +1,6 @@
 FROM anapsix/alpine-java:8_jdk
 
-RUN apk update && apk add libstdc++ curl docker wget
+RUN apk update && apk add libstdc++ curl docker wget nodejs git
 
 RUN mkdir -p /{app,opt}
 
@@ -13,6 +13,8 @@ RUN curl -sS -L -o /gradle.zip http://services.gradle.org/distributions/gradle-3
 ENV PATH=/opt/gradle/bin:$PATH
 
 WORKDIR /app
+
+RUN bower install
 
 RUN wget -nv https://storage.googleapis.com/kubernetes-release/release/v1.6.2/bin/linux/amd64/kubectl
 
