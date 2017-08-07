@@ -83,12 +83,12 @@ deployment {
 							name: "${deploymentName}",
 							env: [[
 								name: "SECRET_PASSWORD",
-								valueFrom: [[
-									secretKeyRef: [[
+								valueFrom: [
+									secretKeyRef: [
 										name: "da-secret",
 										key: "password"
-									]]
-								]]
+									]
+								]
 							]],
 							volumeMounts: [[
 								name: "diskstation-da",
