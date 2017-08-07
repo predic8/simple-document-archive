@@ -83,20 +83,20 @@ deployment {
 							name: "${deploymentName}",
 							env: [
 								[
-									name: "security.user.name",
+									name: "security_user_name",
 									valueFrom: [
 										secretKeyRef: [
 											name: "da-secret",
-											key: "security.user.name"
+											key: "security_user_name"
 										]
 									]
 								],
 								[
-									name: "security.user.password",
+									name: "security_user_password",
 									valueFrom: [
 										secretKeyRef: [
 											name: "da-secret",
-											key: "security.user.password"
+											key: "security_user_password"
 										]
 									]
 								],
