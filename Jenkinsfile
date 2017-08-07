@@ -43,8 +43,8 @@ node {
         $class: 'FileBinding', 
         credentialsId: 'kubernetes-jenkins-key.pem', 
         variable: 'KUBERNETES_JENKINS_KEY'
-      ],
-      [
+      ]
+    ]
   ) {
       String text = sh returnStdout: true, script: "cat $KUBERNETES_CA"
       writeFile file: ".kube/ca.pem", text: text
