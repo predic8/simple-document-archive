@@ -8,6 +8,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
@@ -37,15 +38,17 @@ public class Archive {
 
     @PostConstruct
     public void load() throws Exception {
-        try (Stream<String> stream = Files.lines(Paths.get("document-archive/logs/log.txt"))) {
-            stream.forEach(line -> {
-                ArchivedFile archive = new ArchivedFile();
-                archive.setDate(line.split(" ")[0]);
-                archive.setTime(line.split(" ")[1]);
-                archive.setFileName(line.split(" ")[2]);
-                archive.setHash(line.split(" ")[3]);
-                service.archiveFile(archive);
-            });
+        if (new File("document-archive/logs/log.txt").exists()) {
+            try (Stream<String> stream = Files.lines(Paths.get("document-archive/logs/log.txt"))) {
+                stream.forEach(line -> {
+                    ArchivedFile archive = new ArchivedFile();
+                    archive.setDate(line.split(" ")[0]);
+                    archive.setTime(line.split(" ")[1]);
+                    archive.setFileName(line.split(" ")[2]);
+                    archive.setHash(line.split(" ")[3]);
+                    service.archiveFile(archive);
+                });
+            }
         }
     }
 }
