@@ -45,3 +45,8 @@ mvnw
 mvnw.cmd
 
 .gradle/
+
+document-archive.yaml
+log4j-application.log
+ok
+src/main/resources/static/app/components/
