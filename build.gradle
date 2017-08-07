@@ -81,15 +81,71 @@ deployment {
 						containers: [ [
 							image: "hub.predic8.de/${imageName}:${project.ext.version}",
 							name: "${deploymentName}",
-							env: [[
-								name: "SECRET_PASSWORD",
-								valueFrom: [
-									secretKeyRef: [
-										name: "da-secret",
-										key: "password"
+							env: [
+								[
+									name: "security.user.name",
+									valueFrom: [
+										secretKeyRef: [
+											name: "da-secret",
+											key: "security.user.name"
+										]
+									]
+								],
+								[
+									name: "security.user.password",
+									valueFrom: [
+										secretKeyRef: [
+											name: "da-secret",
+											key: "security.user.password"
+										]
+									]
+								],
+								[
+									name: "user_name",
+									valueFrom: [
+										secretKeyRef: [
+											name: "da-secret",
+											key: "user_name"
+										]
+									]
+								],
+								[
+									name: "email_username",
+									valueFrom: [
+										secretKeyRef: [
+											name: "da-secret",
+											key: "email_username"
+										]
+									]
+								],
+								[
+									name: "email_password",
+									valueFrom: [
+										secretKeyRef: [
+											name: "da-secret",
+											key: "email_password"
+										]
+									]
+								],
+								[
+									name: "email_smtp",
+									valueFrom: [
+										secretKeyRef: [
+											name: "da-secret",
+											key: "email_smtp"
+										]
+									]
+								],
+								[
+									name: "email_recipient",
+									valueFrom: [
+										secretKeyRef: [
+											name: "da-secret",
+											key: "email_recipient"
+										]
 									]
 								]
-							]],
+							],
 							volumeMounts: [[
 								name: "diskstation-da",
 								mountPath: "/usr/src/app/document-archive"
