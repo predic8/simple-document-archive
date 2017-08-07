@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('archiveApp', ['base64'])
+angular.module('archiveApp', [/*'base64'*/])
     /*
     .config(($httpProvider, $base64) => {
         let auth = $base64.encode("");
