@@ -6,6 +6,9 @@ Create *application.properties* in *src/main/resources* containing:
 spring.jpa.hibernate.naming-strategy=org.hibernate.cfg.DefaultNamingStrategy
 spring.jpa.hibernate.ddl-auto=create-drop
 
+security.user.name=
+security.user.password=
+
 user_name=
 
 # E-mail Support
