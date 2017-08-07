@@ -43,8 +43,8 @@ node {
         $class: 'FileBinding', 
         credentialsId: 'kubernetes-jenkins-key.pem', 
         variable: 'KUBERNETES_JENKINS_KEY'
-      ],
-      [
+      ]
+    ]
   ) {
       String text = sh returnStdout: true, script: "cat $KUBERNETES_CA"
       writeFile file: ".kube/ca.pem", text: text
@@ -54,8 +54,6 @@ node {
       writeFile file: ".kube/jenkins.pem", text: text
       text = sh returnStdout: true, script: "cat $KUBERNETES_JENKINS_KEY"
       writeFile file: ".kube/jenkins-key.pem", text: text
-      text = sh returnStdout: true, script: "cat $APPLICATION_PROPERTIES"
-      writeFile fiel: "application.properties", text: text
    }
 
    sh "docker build -t $tempImageName ."
