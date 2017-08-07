@@ -24,6 +24,8 @@ dist/
 nbdist/
 .nb-gradle/
 
+application.properties
+
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
