@@ -10,3 +10,6 @@ spec:
                   port: 25
                   protocol: TCP
                   targetPort: 25
+                - name: webinterface
+                  port: 8080
+                  targetPort: 8080
