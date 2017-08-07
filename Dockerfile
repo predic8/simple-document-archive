@@ -24,3 +24,4 @@ RUN chmod +x kubectl
 RUN mv kubectl /usr/bin
 ADD .kube /root/.kube/
 ADD . /app/
+RUN mv application.properties src/main/resources/
