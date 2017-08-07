@@ -1,6 +1,12 @@
 'use strict';
 
-angular.module('archiveApp', [])
+angular.module('archiveApp', ['base64'])
+    /*
+    .config(($httpProvider, $base64) => {
+        let auth = $base64.encode("");
+        $httpProvider.defaults.headers.common['Authorization'] = 'Basic ' + auth;
+    })
+    */
     .controller('AppController', ($scope, $http, $interval, $timeout) => {
 
         $scope.showVerifyTrue = false;
@@ -8,7 +14,7 @@ angular.module('archiveApp', [])
         $scope.showVerifyAlert = false;
 
         $scope.reload = () => {
-            $http.get('https://localhost:8080/archive')
+            $http.get('https://da.predic8.de/archive')
                 .then((response) => {
                     $scope.files = response.data;
                 });
@@ -19,7 +25,7 @@ angular.module('archiveApp', [])
 
         $scope.verify = () => {
             $scope.showVerifyAlert = true;
-            $http.post('https://localhost:8080/archive/verify')
+            $http.post('https://da.predic8.de/archive/verify')
                 .then((response) => {
 
                     if (response.data.success === true) {
@@ -47,7 +53,7 @@ angular.module('archiveApp', [])
         };
 
         $scope.mail = () => {
-            $http.post('https://localhost:8080/archive/mail');
+            $http.post('https://da.predic8.de/archive/mail');
         };
     });
 
