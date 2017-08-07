@@ -13,9 +13,8 @@ RUN curl -sS -L -o /gradle.zip http://services.gradle.org/distributions/gradle-3
 ENV PATH=/opt/gradle/bin:$PATH
 
 WORKDIR /app
-
-RUN ls
-
+ADD bower.json /app
+ADD .bowerrc /app
 RUN npm install bower -g && bower install --allow-root
 
 RUN wget -nv https://storage.googleapis.com/kubernetes-release/release/v1.6.2/bin/linux/amd64/kubectl
