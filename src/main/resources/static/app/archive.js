@@ -8,7 +8,7 @@ angular.module('archiveApp', [])
         $scope.showVerifyAlert = false;
 
         $scope.reload = () => {
-            $http.get('http://localhost:8080/archive')
+            $http.get('https://localhost:8080/archive')
                 .then((response) => {
                     $scope.files = response.data;
                 });
@@ -19,7 +19,7 @@ angular.module('archiveApp', [])
 
         $scope.verify = () => {
             $scope.showVerifyAlert = true;
-            $http.post('http://localhost:8080/archive/verify')
+            $http.post('https://localhost:8080/archive/verify')
                 .then((response) => {
 
                     if (response.data.success === true) {
@@ -47,7 +47,7 @@ angular.module('archiveApp', [])
         };
 
         $scope.mail = () => {
-            $http.post('http://localhost:8080/archive/mail');
+            $http.post('https://localhost:8080/archive/mail');
         };
     });
 
