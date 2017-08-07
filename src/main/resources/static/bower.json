@@ -1,0 +1,27 @@
+{
+  "name": "document-archive",
+  "homepage": "https://github.com/predic8/simple-document-archive",
+  "authors": [
+    "hiimkoin <nikoebener@gmail.com>"
+  ],
+  "description": "document archive with blockchain based integrity",
+  "main": "",
+  "keywords": [
+    "document",
+    "archive",
+    "blockchain",
+    "integrity"
+  ],
+  "license": "Apache 2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.6.5",
+    "bootstrap": "^3.3.7"
+  }
+}
