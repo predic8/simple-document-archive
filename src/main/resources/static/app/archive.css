@@ -1,0 +1,9 @@
+.clickable {
+    cursor: pointer;
+    margin-top: 5px;
+    text-decoration: underline;
+}
+
+.spaced {
+    margin-top: 5px;
+}

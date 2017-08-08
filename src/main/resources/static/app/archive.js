@@ -25,9 +25,9 @@ angular.module('archiveApp', [/*'base64'*/])
 
         $scope.verify = () => {
             $scope.showVerifyAlert = true;
-            $http.post('/archive/verify')
+            $http.get('/archive/verify')
                 .then((response) => {
-
+                    console.log(response);
                     if (response.data.success === true) {
                         $scope.showVerifyAlert = false;
                         $scope.showVerifyTrue = true;
@@ -37,6 +37,7 @@ angular.module('archiveApp', [/*'base64'*/])
                     } else {
                         $scope.showVerifyAlert = false;
                         $scope.showVerifyFalse = true;
+                        console.log(response);
                         //$timeout(() => {
                           //  $scope.showVerifyFalse = false;
                         //}, 3000);
@@ -53,7 +54,7 @@ angular.module('archiveApp', [/*'base64'*/])
         };
 
         $scope.mail = () => {
-            $http.post('/archive/mail');
+            $http.get('/archive/mail');
         };
     });
 

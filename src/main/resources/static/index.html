@@ -4,11 +4,7 @@
     <meta charset="UTF-8" />
     <title>Document-Archive</title>
     <link rel="stylesheet" href="./app/components/bootstrap/dist/css/bootstrap.min.css" />
-    <style>
-        .clickable {
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="./app/archive.css" />
 </head>
 <body ng-app="archiveApp" style="margin: 15px;">
 
@@ -25,10 +21,12 @@
 
             <div ng-show="files &amp;&amp; files.length > 0">
                 <button type="button" class="btn btn-success" ng-click="verify()">Run Verify Route</button>
+                <!--
                 <button type="button" class="btn btn-info" ng-click="mail()">Run Mail Route</button>
+                -->
             </div>
 
-            <div class="alert alert-warning" role="alert" ng-show="showVerifyAlert">
+            <div class="alert alert-warning spaced" role="alert" ng-show="showVerifyAlert">
                 Verifying...
             </div>
 
