@@ -8,7 +8,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
+@Component
 public class VerifyRoutes extends RouteBuilder {
 
     final static Logger logger = Logger.getLogger(VerifyRoutes.class);
@@ -54,12 +56,16 @@ public class VerifyRoutes extends RouteBuilder {
                 .onCompletion()
                     .choice()
                         .when(exchangeProperty("isValid"))
+                            //.bean(helper, "setData(true, null)")
                             .process(exc -> {
                                 logger.info("Run Hash OK Notification");
                                 HashNotification ok = new HashNotification(false);
                                 ok.start();
                             })
                         .otherwise()
+                            .process(exc -> exc.setProperty("corrFile", corruptedFile))
+                            //.bean(null, "test(false, ${property.corrFile})")
+                            //.bean(VerifyRoutes.class, "test(false)")
                             .process(exc -> {
                                 logger.info("Run Hash Error Notification -> " + corruptedFile);
                                 getFirst = true;
@@ -71,19 +77,12 @@ public class VerifyRoutes extends RouteBuilder {
                 .log("VERIFYROUTE END");
     }
 
-    public boolean isCorrupted() {
-        return !corruptedFile.equals("");
-    }
+
 
     public void start() throws Exception {
         CamelContext ctx = new DefaultCamelContext();
         ctx.addRoutes(new VerifyRoutes());
         ctx.start();
-        Thread.sleep(10000);
-    }
-
-    public boolean isValid() throws Exception {
-        this.start();
-        return !isCorrupted();
+        //Thread.sleep(10000);
     }
 }
