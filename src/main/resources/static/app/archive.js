@@ -14,7 +14,7 @@ angular.module('archiveApp', [/*'base64'*/])
         $scope.showVerifyAlert = false;
 
         $scope.reload = () => {
-            $http.get('https://da.predic8.de/archive')
+            $http.get('/archive')
                 .then((response) => {
                     $scope.files = response.data;
                 });
@@ -25,7 +25,7 @@ angular.module('archiveApp', [/*'base64'*/])
 
         $scope.verify = () => {
             $scope.showVerifyAlert = true;
-            $http.post('https://da.predic8.de/archive/verify')
+            $http.post('/archive/verify')
                 .then((response) => {
 
                     if (response.data.success === true) {
@@ -53,7 +53,7 @@ angular.module('archiveApp', [/*'base64'*/])
         };
 
         $scope.mail = () => {
-            $http.post('https://da.predic8.de/archive/mail');
+            $http.post('/archive/mail');
         };
     });
 
