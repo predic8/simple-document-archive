@@ -4,19 +4,20 @@ import de.predic8.util.AttachLogfile;
 import de.predic8.util.EmailNewFiles;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.routepolicy.quartz2.CronScheduledRoutePolicy;
+import org.springframework.stereotype.Component;
 
+@Component
 public class DailyMailNotification extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
 
-        PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocation("classpath:application.properties");
-        getContext().addComponent("properties", pc);
+        CronScheduledRoutePolicy startPolicy = new CronScheduledRoutePolicy();
+        startPolicy.setRouteStartTime("0 0 21 ? * * *");
 
-        from("file:document-archive/notify?fileName=new_files.txt&noop=true").routeId("DailyNotify")
+        from("file:document-archive/notify?fileName=new_files.txt&noop=true").routeId("DailyNotify").routePolicy(startPolicy).noAutoStartup()
                 .log("Sending DailyMail")
                 .setHeader("subject", simple("Daily Report"))
                 .setHeader("firstName", simple("{{user_name}}"))
@@ -26,12 +27,5 @@ public class DailyMailNotification extends RouteBuilder {
                 .to("smtp://{{email_smtp}}?password={{email_password}}&username={{email_username}}&to={{email_recipient}}&from={{email_username}}")
                 .log("DailyMail send");
 
-    }
-
-    public void start() throws Exception {
-        CamelContext ctx = new DefaultCamelContext();
-        ctx.addRoutes(new DailyMailNotification());
-        ctx.start();
-        Thread.sleep(5000);
     }
 }

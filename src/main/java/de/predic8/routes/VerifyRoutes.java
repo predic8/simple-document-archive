@@ -7,6 +7,7 @@ import de.predic8.util.FileExchangeConverter;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.routepolicy.quartz2.CronScheduledRoutePolicy;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -17,12 +18,15 @@ public class VerifyRoutes extends RouteBuilder {
 
     private String lastHash = "123";
     private boolean getFirst = true;
-    private String corruptedFile = "";
+    public String corruptedFile = "";
 
     @Override
     public void configure() throws Exception {
 
-        from("file:document-archive/logs?fileName=log.txt&noop=true").routeId("verify")
+        CronScheduledRoutePolicy startPolicy = new CronScheduledRoutePolicy();
+        startPolicy.setRouteStartTime("0 0 22 ? * * *");
+
+        from("file:document-archive/logs?fileName=log.txt&noop=true").routeId("VerifyRoute").routePolicy(startPolicy)
                 .split(body().tokenize("\n"))
                     .process(new AddVerifyProperties())
                     .process(new FileExchangeConverter())
@@ -54,30 +58,20 @@ public class VerifyRoutes extends RouteBuilder {
 
         from("direct:valid")
                 .onCompletion()
-                    .choice()
-                        .when(exchangeProperty("isValid"))
-                            //.bean(helper, "setData(true, null)")
-                            .process(exc -> {
-                                logger.info("Run Hash OK Notification");
-                                HashNotification ok = new HashNotification(false);
-                                ok.start();
-                            })
-                        .otherwise()
-                            .process(exc -> exc.setProperty("corrFile", corruptedFile))
-                            //.bean(null, "test(false, ${property.corrFile})")
-                            //.bean(VerifyRoutes.class, "test(false)")
-                            .process(exc -> {
-                                logger.info("Run Hash Error Notification -> " + corruptedFile);
-                                getFirst = true;
-                                HashNotification error = new HashNotification(corruptedFile);
-                                error.start();
-                            })
-                        .end()
+                .process(exc -> exc.setProperty("corrFile", corruptedFile))
+                .bean(VerifyHelper.getInstance(), "receiveData(${property.corrFile})")
+                .process(exc -> {
+                    HashNotification notification;
+                    if (exc.getProperty("corrFile").toString().isEmpty()) {
+                        notification = new HashNotification(false);
+                    } else {
+                        notification = new HashNotification(corruptedFile);
+                    }
+                    notification.start();
+                })
                 .end()
                 .log("VERIFYROUTE END");
     }
-
-
 
     public void start() throws Exception {
         CamelContext ctx = new DefaultCamelContext();
