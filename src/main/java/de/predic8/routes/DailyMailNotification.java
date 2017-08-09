@@ -2,9 +2,7 @@ package de.predic8.routes;
 
 import de.predic8.util.AttachLogfile;
 import de.predic8.util.EmailNewFiles;
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.routepolicy.quartz2.CronScheduledRoutePolicy;
 import org.springframework.stereotype.Component;
 
