@@ -1,12 +1,7 @@
 'use strict';
 
-angular.module('archiveApp', [/*'base64'*/])
-    /*
-    .config(($httpProvider, $base64) => {
-        let auth = $base64.encode("");
-        $httpProvider.defaults.headers.common['Authorization'] = 'Basic ' + auth;
-    })
-    */
+angular.module('archiveApp', [])
+
     .controller('AppController', ($scope, $http, $interval, $timeout) => {
 
         $scope.showVerifyTrue = false;
@@ -27,17 +22,17 @@ angular.module('archiveApp', [/*'base64'*/])
             $scope.showVerifyAlert = true;
             $http.get('/archive/verify')
                 .then((response) => {
-                    console.log(response);
-                    if (response.data.success === true) {
+
+                    if (response.data.success) {
                         $scope.showVerifyAlert = false;
                         $scope.showVerifyTrue = true;
                         //$timeout(() => {
                           //  $scope.showVerifyTrue = false;
                         //}, 3000);
-                    } else {
+                    } else if (!response.data.success) {
+                        $scope.corruptedFile = response.data.file;
                         $scope.showVerifyAlert = false;
                         $scope.showVerifyFalse = true;
-                        console.log(response);
                         //$timeout(() => {
                           //  $scope.showVerifyFalse = false;
                         //}, 3000);
