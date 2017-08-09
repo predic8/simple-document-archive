@@ -1,15 +1,10 @@
 package de.predic8.routes;
 
-import de.predic8.model.ArchivedFile;
 import de.predic8.service.ArchiveService;
 import de.predic8.util.*;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 @Component
 public class ArchiverRoutes extends RouteBuilder {
@@ -20,7 +15,6 @@ public class ArchiverRoutes extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
-        //from("file:document-archive/in?noop=true").routeId("Archiver")
         from("file:document-archive/in?readLock=changed").routeId("ArchiverRoute")
                 .log("Got File: ${in.header.CamelFileName}")
                 .setProperty("fileName").simple("/${date:now:yyyy}/${date:now:MM}/${date:now:HH-mm-ss-S}_${in.header.CamelFileName}")
@@ -34,23 +28,10 @@ public class ArchiverRoutes extends RouteBuilder {
                 .transform(body().append("\n"))
                 .to("file:document-archive/logs?fileExist=Append&fileName=log.txt")
                 .to("file:document-archive/notify?fileExist=Append&fileName=new_files.txt")
-                .process(exchange -> {
-                    ArchivedFile file = new ArchivedFile();
-
-                    String[] properties = exchange.getProperty("entry").toString().split(" ");
-
-                    //file.setDate(LocalDate.parse(properties[0], DateTimeFormatter.ofPattern("yyyy-dd-MM")));
-                    //file.setTime(LocalTime.parse(properties[1], DateTimeFormatter.ofPattern("HH:mm:ss")));
-                    file.setDate(properties[0]);
-                    file.setTime(properties[1]);
-                    file.setFileName(properties[2]);
-                    file.setHash(properties[3]);
-
-                    service.archiveFile(file);
-                })
+                .process(new AddFileToService(service))
                 .setBody().simple("${property.entry}");
                 /* SEND HASH TO TWITTER
-                .to("direct:twitter")
+                .to("direct:twitter");
                 */
 
         from("direct:get-last-hash").routeId("LastHash")
