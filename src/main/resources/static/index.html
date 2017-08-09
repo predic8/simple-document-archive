@@ -17,6 +17,7 @@
         <div>
             <div class="alert alert-info" role="alert" ng-hide="files &amp;&amp; files.length > 0">
                 There are no files yet!
+                <span class="close" aria-hidden="true">&times;</span>
             </div>
 
             <div ng-show="files &amp;&amp; files.length > 0">
@@ -32,11 +33,13 @@
 
             <div class="alert alert-success clickable" role="alert" ng-show="showVerifyTrue" ng-click="hideVerifyTrue()">
                 <strong>All files OK !</strong>
+                <span class="close" aria-hidden="true">&times;</span>
             </div>
 
             <div class="alert alert-danger clickable" role="alert" ng-show="showVerifyFalse" ng-click="hideVerifyFalse()">
                 <strong>{{errorMessage}}</strong> <br>
                 Start at -> <span>{{corruptedFile}}</span>
+                <span class="close" aria-hidden="true">&times;</span>
             </div>
         </div>
 

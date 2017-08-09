@@ -3,6 +3,10 @@
     margin-top: 5px;
 }
 
+.clickable:hover {
+    text-decoration: underline;
+}
+
 .spaced {
     margin-top: 5px;
 }
