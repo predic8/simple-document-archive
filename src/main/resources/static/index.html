@@ -31,11 +31,11 @@
             </div>
 
             <div class="alert alert-success clickable" role="alert" ng-show="showVerifyTrue" ng-click="hideVerifyTrue()">
-                All files OK !
+                <strong>All files OK !</strong>
             </div>
 
             <div class="alert alert-danger clickable" role="alert" ng-show="showVerifyFalse" ng-click="hideVerifyFalse()">
-                Files Corrupted !!! <br>
+                <strong>{{errorMessage}}</strong> <br>
                 Start at -> <span>{{corruptedFile}}</span>
             </div>
         </div>

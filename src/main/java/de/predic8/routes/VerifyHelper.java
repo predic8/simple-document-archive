@@ -6,11 +6,14 @@ public class VerifyHelper {
 
     private static VerifyHelper instance = new VerifyHelper();
 
+    private String status = "waiting";
     private boolean blocked = true;
+
     private boolean isValid;
     private String filename;
 
     public void reset() {
+        this.status = "waiting";
         this.blocked = true;
     }
 
@@ -27,11 +30,20 @@ public class VerifyHelper {
     @Handler
     public void receiveData(String filename) {
         this.blocked = false;
-        System.out.println("called with: ");
-        System.out.println("fileName: " + filename);
         this.isValid = filename.isEmpty() ? true : false;
-        System.out.println("isvalid?: " + isValid);
         this.filename = filename;
+        this.status = "hashError";
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void fileNotFound(String filename) {
+        this.blocked = false;
+        this.status = "fileNotFound";
+        this.filename = filename;
+        this.isValid = false;
     }
 
     public boolean isValid() {

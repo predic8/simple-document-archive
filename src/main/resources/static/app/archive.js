@@ -29,13 +29,19 @@ angular.module('archiveApp', [])
                         //$timeout(() => {
                           //  $scope.showVerifyTrue = false;
                         //}, 3000);
-                    } else if (!response.data.success) {
+                    } else if (!response.data.success && response.data.status === 'hashError') {
+                        $scope.errorMessage = 'Files Corrupted !!!';
                         $scope.corruptedFile = response.data.file;
                         $scope.showVerifyAlert = false;
                         $scope.showVerifyFalse = true;
                         //$timeout(() => {
                           //  $scope.showVerifyFalse = false;
                         //}, 3000);
+                    } else if (!response.data.success && response.data.status === 'fileNotFound') {
+                        $scope.errorMessage = 'File not found !!!';
+                        $scope.corruptedFile = response.data.file;
+                        $scope.showVerifyAlert = false;
+                        $scope.showVerifyFalse = true;
                     }
                 });
         };

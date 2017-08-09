@@ -1,6 +1,7 @@
 package de.predic8.util;
 
 import de.predic8.routes.HashNotification;
+import de.predic8.routes.VerifyHelper;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
@@ -18,6 +19,9 @@ public class FileExchangeConverter implements Processor {
         if (!file.exists()) {
             HashNotification notfound = new HashNotification(fileName, true);
             notfound.start();
+
+            VerifyHelper.getInstance().fileNotFound(fileName);
+
             exchange.getContext().getShutdownStrategy().setLogInflightExchangesOnTimeout(false);
             exchange.getContext().getShutdownStrategy().setTimeout(1);
             exchange.getContext().stop();

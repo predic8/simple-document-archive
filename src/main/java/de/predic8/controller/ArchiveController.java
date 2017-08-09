@@ -43,12 +43,13 @@ public class ArchiveController {
         while (VerifyHelper.getInstance().isBlocked()) {
             Thread.sleep(500);
         }
+        Map<String, Object> map = new HashMap<>();
         if (VerifyHelper.getInstance().isValid()) {
             return new ResponseEntity<>(Collections.singletonMap("success", true), HttpStatus.OK);
         } else {
-            Map<String, Object> map = new HashMap<>();
             map.put("success", false);
             map.put("file", VerifyHelper.getInstance().getFilename());
+            map.put("status", VerifyHelper.getInstance().getStatus());
             return new ResponseEntity<Map<String, Object>>(map, HttpStatus.OK);
         }
     }
