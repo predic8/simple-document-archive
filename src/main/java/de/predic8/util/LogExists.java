@@ -7,9 +7,8 @@ import java.io.File;
 
 public class LogExists implements Processor {
 
-    public static final String LOG_FILE = "document-archive/logs/log.txt";
-
+    @Override
     public void process(Exchange e) throws Exception {
-        e.setProperty("fileExists", new File(LOG_FILE).exists());
+        e.setProperty("fileExists", new File("document-archive/logs/log.txt").exists());
     }
 }

@@ -9,6 +9,7 @@ import java.util.Base64;
 
 public class AddHashedBodyToDigest implements Processor {
 
+    @Override
     public void process(Exchange exc) throws Exception {
         MessageDigest md = (MessageDigest) exc.getProperty("messageDigest");
         byte[] digest = md.digest(exc.getIn().getBody(ByteBuffer.class).array());

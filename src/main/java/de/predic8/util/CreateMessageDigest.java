@@ -8,6 +8,7 @@ import java.security.MessageDigest;
 
 public class CreateMessageDigest implements Processor {
 
+    @Override
     public void process(Exchange exc) throws Exception {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         ByteBuffer buffer = exc.getIn().getBody(ByteBuffer.class);

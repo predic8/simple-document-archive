@@ -5,6 +5,7 @@ import org.apache.camel.Processor;
 
 public class AddVerifyProperties implements Processor {
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         String line = exchange.getIn().getBody(String.class);
         String[] res = line.split(" ");

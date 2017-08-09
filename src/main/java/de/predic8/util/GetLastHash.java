@@ -11,6 +11,7 @@ import java.nio.charset.Charset;
 
 public class GetLastHash implements Processor {
 
+    @Override
     public void process(Exchange exchange) throws Exception {
 
         String[] lastHashLine = getLastLine().split(" ");
