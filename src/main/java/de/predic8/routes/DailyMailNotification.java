@@ -15,7 +15,7 @@ public class DailyMailNotification extends RouteBuilder {
         CronScheduledRoutePolicy startPolicy = new CronScheduledRoutePolicy();
         startPolicy.setRouteStartTime("0 0 21 ? * * *");
 
-        from("file:document-archive/notify?fileName=new_files.txt&noop=true").routeId("DailyNotify").routePolicy(startPolicy).noAutoStartup()
+        from("file:document-archive/notify?fileName=new_files.txt&noop=true").routeId("DailyNotify").routePolicy(startPolicy)
                 .log("Sending DailyMail")
                 .setHeader("subject", simple("Daily Report"))
                 .setHeader("firstName", simple("{{user_name}}"))
