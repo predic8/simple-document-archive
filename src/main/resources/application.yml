@@ -1,0 +1,8 @@
+camel:
+  springboot:
+    name: DocumentArchive
+
+  component:
+    servlet:
+      mapping:
+        contextPath: /rest/*

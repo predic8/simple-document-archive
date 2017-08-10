@@ -3,14 +3,10 @@ package de.predic8.routes;
 import de.predic8.service.ArchiveService;
 import de.predic8.util.*;
 import org.apache.camel.builder.RouteBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ArchiverRoutes extends RouteBuilder {
-
-    @Autowired
-    ArchiveService service;
 
     @Override
     public void configure() throws Exception {
@@ -28,7 +24,7 @@ public class ArchiverRoutes extends RouteBuilder {
                 .transform(body().append("\n"))
                 .to("file:document-archive/logs?fileExist=Append&fileName=log.txt")
                 .to("file:document-archive/notify?fileExist=Append&fileName=new_files.txt")
-                .process(new AddFileToService(service))
+                .bean(ArchiveService.class, "addFile(${property.entry})")
                 .setBody().simple("${property.entry}");
                 /* SEND HASH TO TWITTER
                 .to("direct:twitter");

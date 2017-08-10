@@ -4,18 +4,16 @@ import de.predic8.model.ArchivedFile;
 import de.predic8.model.IArchivedFile;
 import de.predic8.repo.ArchiveRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-
-@Service
+@Component
 public class ArchiveService implements IArchivedFile {
 
     @Autowired
     ArchiveRepository repository;
 
     @Override
-    public Collection<ArchivedFile> findAll() {
+    public Iterable<ArchivedFile> findAll() {
         return repository.findAll();
     }
 
@@ -29,5 +27,15 @@ public class ArchiveService implements IArchivedFile {
         return repository.save(file);
     }
 
-
+    @Override
+    public ArchivedFile addFile(String entry) {
+        ArchivedFile file = new ArchivedFile();
+        String[] properties = entry.split(" ");
+        file.setDate(properties[0]);
+        file.setTime(properties[1]);
+        file.setFileName(properties[2]);
+        file.setHash(properties[3]);
+        this.archiveFile(file);
+        return file;
+    }
 }

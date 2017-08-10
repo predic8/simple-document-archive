@@ -1,9 +1,8 @@
 package de.predic8.repo;
 
 import de.predic8.model.ArchivedFile;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.CrudRepository;
 
-@Repository
-public interface ArchiveRepository extends JpaRepository<ArchivedFile, Long> {
+public interface ArchiveRepository extends CrudRepository<ArchivedFile, Long> {
+
 }

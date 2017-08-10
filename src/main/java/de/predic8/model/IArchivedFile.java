@@ -1,9 +1,8 @@
 package de.predic8.model;
 
-import java.util.Collection;
-
 public interface IArchivedFile {
-    Collection<ArchivedFile> findAll();
+    Iterable<ArchivedFile> findAll();
     ArchivedFile findOne(Long id);
     ArchivedFile archiveFile(ArchivedFile file);
+    ArchivedFile addFile(String entry);
 }

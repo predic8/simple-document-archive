@@ -6,6 +6,7 @@ import org.apache.camel.main.Main;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -14,7 +15,7 @@ import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 @SpringBootApplication
-public class Archive {
+public class Archive extends SpringBootServletInitializer {
 
     @Autowired
     ArchiveService service;
@@ -29,10 +30,6 @@ public class Archive {
 
     private void boot() throws Exception {
         main = new Main();
-        //main.addRouteBuilder(new ArchiverRoutes());
-        //main.addRouteBuilder(new DailyMail());
-        //main.addRouteBuilder(new Verify());
-        System.out.println("Starting... Use CTRL + C to terminate!");
         main.run();
     }
 
