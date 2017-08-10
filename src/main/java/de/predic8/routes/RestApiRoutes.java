@@ -8,6 +8,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class RestApiRoutes extends RouteBuilder {
 
+    // TODO: Secure REST Api
+    // TODO: VerifyRoute returns if everything is ok
+    // TODO: VerifyRoute returns if File is Corrupted
+    // TODO: VerifyRoute returns if File is Missing
+    // TODO: VerifyRoute no Email if called from Webinterface
+
     @Override
     public void configure() throws Exception {
 
