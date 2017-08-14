@@ -34,6 +34,8 @@ public class VerifyRoutes extends RouteBuilder {
         from("direct:verify").routeId("verify-route")
                 .onException(FileNotFoundException.class)
                 .handled(true)
+                    .process(exc -> { exc.setProperty("corrFile", corruptedFile); exc.setProperty("fileIsMissing", true); })
+                    .to("direct:fileNotFound")
                     .process(exc -> {
                         exc.setOut(new DefaultMessage());
                         VerifyModel model = new VerifyModel();

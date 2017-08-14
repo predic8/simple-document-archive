@@ -18,12 +18,9 @@ public class HashNotification extends RouteBuilder {
                 .process(new BodyToProperty())
                 .pollEnrich("file:document-archive/logs?fileName=log.txt&noop=true&idempotent=false")
                 .log("Started sending HashNotification E-Mail")
-                .log("corrFile: ${property.corrFile}, missing: ${property.fileIsMissing}, valid: ${property.isValid}")
                 .choice()
                     .when(exchangeProperty("isValid"))
                         .to("direct:everythingOk")
-                    .when(exchangeProperty("fileIsMissing"))
-                        .to("direct:fileNotFound")
                     .otherwise()
                         .to("direct:hashError")
                 .end()
@@ -37,6 +34,7 @@ public class HashNotification extends RouteBuilder {
                 .setHeader("firstName", simple("{{user_name}}"))
                 .setBody(simple("${property.corrFile}"))
                 .to("freemarker:/email-templates/file_not_found.ftl")
+                .to("smtp://{{email_smtp}}?password={{email_password}}&username={{email_username}}&to={{email_recipient}}&from={{email_username}}")
                 .log("File not found E-Mail send");
 
         from("direct:hashError").routeId("notify-hash-error-route")
