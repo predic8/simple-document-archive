@@ -11,7 +11,7 @@ public class ArchiverRoutes extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
-        from("file:document-archive/in?readLock=changed").routeId("ArchiverRoute")
+        from("file:document-archive/in?readLock=changed").routeId("archiver-route")
                 .log("Got File: ${in.header.CamelFileName}")
                 .setProperty("fileName").simple("/${date:now:yyyy}/${date:now:MM}/${date:now:HH-mm-ss-S}_${in.header.CamelFileName}")
                 .process(new NormalizeFileName())
@@ -30,7 +30,7 @@ public class ArchiverRoutes extends RouteBuilder {
                 .to("direct:twitter");
                 */
 
-        from("direct:get-last-hash").routeId("LastHash")
+        from("direct:get-last-hash").routeId("get-last-hash-route")
                 .process(new LogExists())
                 .choice()
                     .when(exchangeProperty("fileExists"))
@@ -39,7 +39,7 @@ public class ArchiverRoutes extends RouteBuilder {
                         .setBody().simple("123")
                     .end();
 
-        from("direct:twitter").routeId("twitterRoute")
+        from("direct:twitter").routeId("twitter-route")
                 .to("twitter://timeline/user?consumerKey={{twitter_consumerKey}}&consumerSecret={{twitter_consumerSecret}}&accessToken={{twitter_accessToken}}&accessTokenSecret={{twitter_accessTokenSecret}}");
 
     }

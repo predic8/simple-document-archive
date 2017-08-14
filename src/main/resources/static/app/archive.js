@@ -9,7 +9,7 @@ angular.module('archiveApp', [])
         $scope.showVerifyAlert = false;
 
         $scope.reload = () => {
-            $http.get('/archive')
+            $http.get('/rest/archive')
                 .then((response) => {
                     $scope.files = response.data;
                 });
@@ -20,20 +20,19 @@ angular.module('archiveApp', [])
 
         $scope.verify = () => {
             $scope.showVerifyAlert = true;
-            $http.get('/archive/verify')
+            $http.get('/rest/archive/verify')
                 .then((response) => {
-
-                    if (response.data.success) {
+                    if (response.data.valid) {
                         $scope.showVerifyAlert = false;
                         $scope.showVerifyTrue = true;
-                    } else if (!response.data.success && response.data.status === 'hashError') {
+                    } else if (!response.data.valid && !response.data.fileIsMissing) {
                         $scope.errorMessage = 'Files Corrupted !!!';
-                        $scope.corruptedFile = response.data.file;
+                        $scope.corruptedFile = response.data.corruptedFile;
                         $scope.showVerifyAlert = false;
                         $scope.showVerifyFalse = true;
-                    } else if (!response.data.success && response.data.status === 'fileNotFound') {
+                    } else if (!response.data.valid && response.data.fileIsMissing) {
                         $scope.errorMessage = 'File not found !!!';
-                        $scope.corruptedFile = response.data.file;
+                        $scope.corruptedFile = response.data.corruptedFile;
                         $scope.showVerifyAlert = false;
                         $scope.showVerifyFalse = true;
                     }
@@ -46,10 +45,6 @@ angular.module('archiveApp', [])
 
         $scope.hideVerifyFalse = () => {
             $scope.showVerifyFalse = false;
-        };
-
-        $scope.mail = () => {
-            $http.get('/archive/mail');
         };
     });
 

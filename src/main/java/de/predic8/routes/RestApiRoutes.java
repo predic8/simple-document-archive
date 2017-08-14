@@ -3,16 +3,12 @@ package de.predic8.routes;
 import de.predic8.service.ArchiveService;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.stereotype.Component;
 
 @Component
+@EnableGlobalMethodSecurity
 public class RestApiRoutes extends RouteBuilder {
-
-    // TODO: Secure REST Api
-    // TODO: VerifyRoute returns if everything is ok
-    // TODO: VerifyRoute returns if File is Corrupted
-    // TODO: VerifyRoute returns if File is Missing
-    // TODO: VerifyRoute no Email if called from Webinterface
 
     @Override
     public void configure() throws Exception {
@@ -36,6 +32,11 @@ public class RestApiRoutes extends RouteBuilder {
                     .endRest()
                 .get("/verify").description("Verify Archive")
                     .route().routeId("verify-api")
-                    .to("direct:verify");
+                    .to("direct:verify")
+                    .endRest()
+                .get("/verify/mail").description("Verify Archive and send E-Mail")
+                    .route().routeId("verify-mail-api")
+                    .to("direct:verify-full");
+
     }
 }
