@@ -49,4 +49,5 @@ mvnw.cmd
 document-archive.yaml
 log4j-application.log
 ok
+C:\\log4j-application.log
 src/main/resources/static/app/components/
