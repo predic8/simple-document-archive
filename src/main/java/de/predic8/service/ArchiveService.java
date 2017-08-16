@@ -35,6 +35,8 @@ public class ArchiveService implements IArchivedFile {
         file.setTime(properties[1]);
         file.setFileName(properties[2]);
         file.setHash(properties[3]);
+        file.setPath(properties[2].substring(0, properties[2].indexOf('_')));
+        file.setTotalFileName(properties[2].substring(properties[2].indexOf('_') + 1));
         this.archiveFile(file);
         return file;
     }

@@ -27,6 +27,9 @@ public class ArchivedFile {
     @Column(name = "hash")
     String hash;
 
+    String path;
+    String totalFileName;
+
     public ArchivedFile() {}
 
     public Long getId() {
@@ -69,14 +72,32 @@ public class ArchivedFile {
         this.hash = hash;
     }
 
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getTotalFileName() {
+        return totalFileName;
+    }
+
+    public void setTotalFileName(String totalFileName) {
+        this.totalFileName = totalFileName;
+    }
+
     @Override
     public String toString() {
         return "ArchivedFile{" +
                 "id=" + id +
-                ", date=" + date +
-                ", time=" + time +
+                ", date='" + date + '\'' +
+                ", time='" + time + '\'' +
                 ", fileName='" + fileName + '\'' +
                 ", hash='" + hash + '\'' +
+                ", path='" + path + '\'' +
+                ", totalFileName='" + totalFileName + '\'' +
                 '}';
     }
 }

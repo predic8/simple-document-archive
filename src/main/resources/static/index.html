@@ -14,6 +14,17 @@
             <h1>Document Archive</h1>
         </div>
 
+        <button ngf-select="uploadFiles($ufiles)" multiple accept="*">Select Files</button>
+        <br>
+        Files:
+        <ul>
+            <li ng-repeat="u in ufiles">{{u.name}}</li>
+        </ul>
+        <span class="progress" ng-show="progress >= 0">
+            <div style="width:{{progress}}%" ng-bind="progress + '%'"></div>
+        </span>
+        {{errorMsg}}
+
         <div>
             <div class="alert alert-info" role="alert" ng-hide="files &amp;&amp; files.length > 0">
                 There are no files yet!
@@ -50,21 +61,37 @@
             <hr />
 
             <div>
-                <table class="table table-striped table-hover" id="archiveTable"> <!-- table-condensed -->
+                <table class="table table-striped table-hover" id="archiveTable" ts-wrapper> <!-- table-condensed -->
                     <thead>
                         <tr>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Filename</th>
-                            <th>Hash</th>
+                            <th ts-criteria="date|parseDate">
+                                <a href="" class="nounderline">
+                                    Date&ensp;
+                                </a>
+                            </th>
+                            <th ts-criteria="time">
+                                <a href="" class="nounderline">
+                                    Time&ensp;
+                                </a>
+                            </th>
+                            <th ts-criteria="totalFileName|lowercase" ts-default>
+                                <a href="" class="nounderline">
+                                    Filename&ensp;
+                                </a>
+                            </th>
+                            <th ts-criteria="path|lowercase">
+                                <a class="nounderline">
+                                    Path&ensp;
+                                </a>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="file in files | filter:searchArchive">
+                        <tr ng-repeat="file in files | filter:searchArchive" ng-dblclick="gotoFile(file.id)" ts-repeat ts-hide-no-data>
                             <td>{{file.date | date:'yyyy-MM-dd'}}</td>
                             <td>{{file.time | date:'HH:mm:ss'}}</td>
-                            <td>{{file.fileName}}</td>
-                            <td>{{file.hash}}</td>
+                            <td>{{file.totalFileName}}</td>
+                            <td>{{file.path}}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -73,7 +100,7 @@
     </div>
 
 <script type="text/javascript" src="./app/components/angular/angular.min.js"></script>
-<script type="text/javascript" src="./app/components/angular-base64/angular-base64.js"></script>
+<script type="text/javascript" src="./app/components/angular-tablesort/js/angular-tablesort.js"></script>
 <script type="text/javascript" src="./app/archive.js"></script>
 </body>
 </html>

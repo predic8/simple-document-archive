@@ -1,6 +1,8 @@
 'use strict';
 
-angular.module('archiveApp', [])
+// TODO: change toggle logic
+
+angular.module('archiveApp', ['tableSort'])
 
     .controller('AppController', ($scope, $http, $interval, $timeout) => {
 
@@ -13,7 +15,7 @@ angular.module('archiveApp', [])
                 .then((response) => {
                     $scope.files = response.data;
                 });
-        };
+        }
 
         $scope.reload();
         $interval($scope.reload, 5000);
@@ -37,14 +39,22 @@ angular.module('archiveApp', [])
                         $scope.showVerifyFalse = true;
                     }
                 });
-        };
+        }
+
+        $scope.gotoFile = (id) => {
+            window.location = '/rest/archive/file/download/' + id;
+        }
+
+        $scope.uploadFile = () => {
+            $http.post()
+        }
 
         $scope.hideVerifyTrue = () => {
             $scope.showVerifyTrue = false;
-        };
+        }
 
         $scope.hideVerifyFalse = () => {
             $scope.showVerifyFalse = false;
-        };
+        }
     });
 

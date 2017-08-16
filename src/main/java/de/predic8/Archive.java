@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -15,7 +16,10 @@ import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 @SpringBootApplication
+@EnableGlobalMethodSecurity
 public class Archive extends SpringBootServletInitializer {
+
+    // TODO: File upload
 
     @Autowired
     ArchiveService service;
@@ -39,10 +43,13 @@ public class Archive extends SpringBootServletInitializer {
             try (Stream<String> stream = Files.lines(Paths.get("document-archive/logs/log.txt"))) {
                 stream.forEach(line -> {
                     ArchivedFile archive = new ArchivedFile();
-                    archive.setDate(line.split(" ")[0]);
-                    archive.setTime(line.split(" ")[1]);
-                    archive.setFileName(line.split(" ")[2]);
-                    archive.setHash(line.split(" ")[3]);
+                    String[] tmp = line.split(" ");
+                    archive.setDate(tmp[0]);
+                    archive.setTime(tmp[1]);
+                    archive.setFileName(tmp[2]);
+                    archive.setHash(tmp[3]);
+                    archive.setTotalFileName(tmp[2].substring(tmp[2].indexOf('_') + 1));
+                    archive.setPath(tmp[2].substring(0, tmp[2].indexOf('_')));
                     service.archiveFile(archive);
                 });
             }

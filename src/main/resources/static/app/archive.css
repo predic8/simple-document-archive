@@ -18,3 +18,23 @@
 .bigbutton {
     width: 200px;
 }
+
+[hidden] {
+    display: none !important;
+}
+
+.nounderline {
+    cursor: pointer;
+}
+.nounderline:hover {
+    text-decoration: none;
+}
+.nounderline:link {
+    text-decoration: none;
+}
+.nounderline:visited {
+    text-decoration: none;
+}
+.nounderline:active {
+    text-decoration: none;
+}
