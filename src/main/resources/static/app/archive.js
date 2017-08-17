@@ -41,6 +41,10 @@ angular.module('archiveApp', ['tableSort'])
                 });
         }
 
+        $scope.dlLog = () => {
+            window.location = '/rest/archive/log';
+        }
+
         $scope.gotoFile = (id) => {
             window.location = '/rest/archive/file/download/' + id;
         }

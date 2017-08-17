@@ -15,6 +15,8 @@ import java.io.*;
 @Component
 public class RestApiRoutes extends RouteBuilder {
 
+    // TODO: refactor identical processes
+
     @Autowired
     ArchiveService service;
 
@@ -59,6 +61,17 @@ public class RestApiRoutes extends RouteBuilder {
                         response.setHeader("Content-Length", String.valueOf(file.length()));
                         FileCopyUtils.copy(in, response.getOutputStream());
                     })
-                    .endRest();
+                    .endRest()
+                .get("/log").description("Download current logfile")
+                    .route().routeId("log-download-api")
+                    .process(exc -> {
+                        HttpServletResponse response = exc.getIn().getBody(HttpServletResponse.class);
+                        File log = new File("document-archive/logs/log.txt");
+                        InputStream in = new FileInputStream(log);
+                        response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+                        response.setHeader("Content-Disposition", "attachment; filename=" + log.getName());
+                        response.setHeader("Content-Length", String.valueOf(log.length()));
+                        FileCopyUtils.copy(in, response.getOutputStream());
+                    });
     }
 }
