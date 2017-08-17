@@ -14,16 +14,18 @@
             <h1>Document Archive</h1>
         </div>
 
-        <button ngf-select="uploadFiles($ufiles)" multiple accept="*">Select Files</button>
-        <br>
-        Files:
-        <ul>
-            <li ng-repeat="u in ufiles">{{u.name}}</li>
-        </ul>
-        <span class="progress" ng-show="progress >= 0">
-            <div style="width:{{progress}}%" ng-bind="progress + '%'"></div>
-        </span>
-        {{errorMsg}}
+        <div class="upload">
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <input id="fileuploadchoose" type="file" name="fileToUpload" data-multiple-caption="{count} files selected" multiple>
+                <!--<label for="fileuploadchoose"><strong>Choose a file</strong></label>-->
+                <input id="fileuploadbutton" type="submit" value="Upload" name="submit">
+            </form><br>
+            <!--
+            <div id="dropbox" ng-class="dropClass">
+                <span>Drop files here...</span>
+            </div><br>
+            -->
+        </div>
 
         <div>
             <div class="alert alert-info" role="alert" ng-hide="files &amp;&amp; files.length > 0">

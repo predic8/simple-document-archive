@@ -59,10 +59,6 @@ public class RestApiRoutes extends RouteBuilder {
                         response.setHeader("Content-Length", String.valueOf(file.length()));
                         FileCopyUtils.copy(in, response.getOutputStream());
                     })
-                    .endRest()
-                .post("/upload").consumes("multipart/form-data").description("Upload a file to archive")
-                    .route().routeId("file-upload-api")
-                    .to("direct:upload");
-
+                    .endRest();
     }
 }
