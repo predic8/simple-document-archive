@@ -37,7 +37,18 @@ public class ArchiveService implements IArchivedFile {
         file.setHash(properties[3]);
         file.setPath(properties[2].substring(0, properties[2].indexOf('_')));
         file.setTotalFileName(properties[2].substring(properties[2].indexOf('_') + 1));
+        if (properties.length > 4) {
+            file.setBelegnr(properties[4]);
+        }
         this.archiveFile(file);
         return file;
+    }
+
+    @Override
+    public ArchivedFile updateFile(ArchivedFile file) {
+        ArchivedFile newFile = file;
+        repository.delete(this.findOne(file.getId()));
+        this.archiveFile(newFile);
+        return newFile;
     }
 }

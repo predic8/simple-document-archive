@@ -1,10 +1,7 @@
 package de.predic8.routes;
 
 import de.predic8.model.VerifyModel;
-import de.predic8.util.AddHashedBodyToDigest;
-import de.predic8.util.AddVerifyProperties;
-import de.predic8.util.CreateMessageDigest;
-import de.predic8.util.FileExchangeConverter;
+import de.predic8.util.*;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.log4j.Logger;
@@ -36,14 +33,15 @@ public class VerifyRoutes extends RouteBuilder {
                 .handled(true)
                     .process(exc -> { exc.setProperty("corrFile", corruptedFile); exc.setProperty("fileIsMissing", true); })
                     .to("direct:fileNotFound")
-                    .process(exc -> {
+                    /*.process(exc -> {
                         exc.setOut(new DefaultMessage());
                         VerifyModel model = new VerifyModel();
                         model.setCorruptedFile(corruptedFile);
                         model.setValid(false);
                         model.setFileIsMissing(true);
                         exc.getOut().setBody(model);
-                    })
+                    })*/
+                    .process(new FileNotFound())
                 .end()
                 .process(exc -> { lastHash = "123"; getFirst = true; corruptedFile = ""; })
                 .pollEnrich("file:document-archive/logs?fileName=log.txt&noop=true&idempotent=false")
@@ -51,32 +49,36 @@ public class VerifyRoutes extends RouteBuilder {
                     .stopOnException()
                     .process(new AddVerifyProperties())
                     .process(new FileExchangeConverter())
-                    .choice()
-                        .when(exchange -> (Boolean)exchange.getProperty("missing"))
-                            .process(exc -> corruptedFile = (String) exc.getProperty("missingFile"))
-                            .throwException(new FileNotFoundException())
+                    .filter(exchangeProperty("missing"))
+                        .process(exc -> corruptedFile = (String) exc.getProperty("missingFile"))
+                        .throwException(new FileNotFoundException())
                     .end()
+                    //.choice()
+                        //.when(exchange -> (Boolean)exchange.getProperty("missing"))
+                            //.process(exc -> corruptedFile = (String) exc.getProperty("missingFile"))
+                            //.throwException(new FileNotFoundException())
+                    //.end()
                     .process(new CreateMessageDigest())
                     .process(exc -> exc.getIn().setBody(this.lastHash))
                     .process(new AddHashedBodyToDigest())
-                    .setProperty("entry").simple("${property.digest}")
+                    //.setProperty("entry").simple("${property.digest}")
                     .choice()
-                        .when(exchangeProperty("entry").isEqualTo(exchangeProperty("docHash")))
+                        .when(exchangeProperty("digest").isEqualTo(exchangeProperty("docHash")))
                             .log("--> OK <--")
                             .process(exc -> {
                                 this.lastHash = (String) exc.getProperty("docHash");
                                 exc.setProperty("isValid", true);
                                 this.corruptedFile = "";
                             })
-                            .otherwise()
-                                .log(String.format("ERROR -> %S", lastHash))
-                                .process(exc -> {
-                                    exc.setProperty("isValid", false);
-                                    if (getFirst) {
-                                        corruptedFile = (String) exc.getProperty("docName");
-                                        getFirst = false;
-                                    }
-                                })
+                        .otherwise()
+                            .log(String.format("ERROR -> %S", lastHash))
+                            .process(exc -> {
+                                exc.setProperty("isValid", false);
+                                if (getFirst) {
+                                    corruptedFile = (String) exc.getProperty("docName");
+                                    getFirst = false;
+                                }
+                            })
                     .end()
                 .end()
                 .process(exc -> exc.setProperty("corrFile", corruptedFile))

@@ -12,6 +12,6 @@ public class AddVerifyProperties implements Processor {
         exchange.setProperty("docDate", res[0]);
         exchange.setProperty("docTime", res[1]);
         exchange.setProperty("docName", res[2]);
-        exchange.setProperty("docHash", res[res.length - 1]);
+        exchange.setProperty("docHash", res[3]);
     }
 }

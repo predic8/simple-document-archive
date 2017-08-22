@@ -2,53 +2,73 @@
 <html>
 <head lang="de">
     <meta charset="UTF-8" />
-    <title>Document-Archive</title>
+    <title>Dokumenten Archiv</title>
     <link rel="stylesheet" href="./app/components/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./app/components/angular-xeditable/dist/css/xeditable.min.css" />
     <link rel="stylesheet" href="./app/archive.css" />
 </head>
-<body ng-app="archiveApp" style="margin: 15px;">
+<body ng-app="archiveApp">
 
     <div class="container" ng-controller="AppController">
 
         <div class="page-header">
-            <h1>Document Archive</h1>
+            <h1>Dokumenten Archiv</h1>
         </div>
 
         <div class="upload">
-            <form action="/upload" method="post" enctype="multipart/form-data">
-                <input id="fileuploadchoose" type="file" name="fileToUpload" data-multiple-caption="{count} files selected" multiple>
-                <!--<label for="fileuploadchoose"><strong>Choose a file</strong></label>-->
-                <input id="fileuploadbutton" type="submit" value="Upload" name="submit">
-            </form><br>
-            <!--
-            <div id="dropbox" ng-class="dropClass">
-                <span>Drop files here...</span>
-            </div><br>
-            -->
+
+            <div class="quickupload">
+                <form action="/upload" method="post" enctype="multipart/form-data">
+
+                    <input type="file" id="fileupload" class="inputfile" name="fileToUpload" onchange="angular.element(this).scope().belegNummer(this)">
+                    <input type="submit" id="submitupload" class="hidden">
+
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <label for="fileupload" id="inputLabel">
+                                <span class="glyphicon glyphicon-{{inputIcon}}"></span>
+                                &ensp;{{inputMode}}
+                            </label>
+                        </span>
+                        <input type="text" class="form-control" placeholder="{{belegPlaceholder}}" name="belegNr" id="belegInput">
+                        <!--
+                        <span class="input-group-addon">
+                            <label for="submitupload">
+                                <span class="glyphicon glyphicon-cloud-upload"></span>
+                                &ensp;Hochladen
+                            </label>
+                        </span>
+                        -->
+                    </div>
+
+                </form>
+                <a href="./app/upload.html">Mehrere Daten Hochladen</a>
+            </div>
+            <br>
         </div>
 
         <div>
             <div class="alert alert-info" role="alert" ng-hide="files &amp;&amp; files.length > 0">
-                There are no files yet!
+                Es gibt noch <strong>keine </strong> Daten!
             </div>
 
             <div ng-show="files &amp;&amp; files.length > 0">
-                <button type="button" class="btn btn-info bigbutton" ng-click="verify()">Verify</button>
-                <button type="button" class="btn btn-info bigbutton" ng-click="dlLog()">Download Logfile</button>
+                <button type="button" class="btn btn-info bigbutton" ng-click="verify()">Verifizieren</button>
+                <button type="button" class="btn btn-info bigbutton" ng-click="dlLog()">Logfile Downloaden</button>
             </div>
 
             <div class="alert alert-warning spaced" role="alert" ng-show="showVerifyAlert">
-                Verifying...
+                Verifiziere...
             </div>
 
             <div class="alert alert-success clickable" role="alert" ng-show="showVerifyTrue" ng-click="hideVerifyTrue()">
-                <strong>All files OK !</strong>
+                <strong>Alles OK!</strong>
                 <span class="close" aria-hidden="true">&times;</span>
             </div>
 
             <div class="alert alert-danger clickable" role="alert" ng-show="showVerifyFalse" ng-click="hideVerifyFalse()">
                 <strong>{{errorMessage}}</strong> <br>
-                Start at -> <span>{{corruptedFile}}</span>
+                Beginn -> <span>{{corruptedFile}}</span>
                 <span class="close" aria-hidden="true">&times;</span>
             </div>
         </div>
@@ -57,8 +77,11 @@
 
         <div ng-show="files &amp;&amp; files.length > 0">
 
-            <div class="form-group">
-                <input type="text" class="form-control" id="searchField" placeholder="Search..." ng-model="searchArchive">
+            <div class="input-group">
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-search"></span>
+                </span>
+                <input type="text" class="form-control" id="searchField" placeholder="Suchen..." ng-model="searchArchive">
             </div>
 
             <hr />
@@ -69,32 +92,41 @@
                         <tr>
                             <th ts-criteria="date|parseDate">
                                 <a href="" class="nounderline">
-                                    Date&ensp;
+                                    Datum&ensp;
                                 </a>
                             </th>
                             <th ts-criteria="time">
                                 <a href="" class="nounderline">
-                                    Time&ensp;
-                                </a>
-                            </th>
-                            <th ts-criteria="totalFileName|lowercase" ts-default>
-                                <a href="" class="nounderline">
-                                    Filename&ensp;
+                                    Zeit&ensp;
                                 </a>
                             </th>
                             <th ts-criteria="path|lowercase">
                                 <a class="nounderline">
-                                    Path&ensp;
+                                    Belegnummer&ensp;
+                                </a>
+                            </th>
+                            <th ts-criteria="totalFileName|lowercase" class="absorbing-column" ts-default>
+                                <a href="" class="nounderline">
+                                    Dateiname&ensp;
                                 </a>
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="file in files | filter:searchArchive" ng-dblclick="gotoFile(file.id)" ts-repeat ts-hide-no-data>
-                            <td>{{file.date | date:'yyyy-MM-dd'}}</td>
+                        <tr ng-repeat="file in files | filter:searchArchive" ts-repeat ts-hide-no-data>
+                            <!--<td>{{file.date | date:'yyyy-MM-dd'}}</td>-->
+                            <td>{{file.date | date:'dd.MM.yyyy'}}</td>
                             <td>{{file.time | date:'HH:mm:ss'}}</td>
-                            <td>{{file.totalFileName}}</td>
-                            <td>{{file.path}}</td>
+                            <td>
+                                <a href="" editable-text="file.belegnr" onbeforesave="updateBelegNr(file.id, $data)">
+                                    {{file.belegnr || 'keine'}}
+                                </a>
+                            </td>
+                            <td>
+                                <span ng-click="gotoFile(file.id)" class="downloadableFile"> <!-- ng-dblclick -->
+                                    {{file.totalFileName}}
+                                </span>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -104,6 +136,8 @@
 
 <script type="text/javascript" src="./app/components/angular/angular.min.js"></script>
 <script type="text/javascript" src="./app/components/angular-tablesort/js/angular-tablesort.js"></script>
+<script type="text/javascript" src="./app/components/angular-xeditable/dist/js/xeditable.min.js"></script>
+<script type="text/javascript" src="./app/components/ng-file-upload/ng-file-upload.min.js"></script>
 <script type="text/javascript" src="./app/archive.js"></script>
 </body>
 </html>

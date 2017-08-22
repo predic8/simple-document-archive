@@ -2,6 +2,7 @@ package de.predic8.routes;
 
 import de.predic8.model.ArchivedFile;
 import de.predic8.service.ArchiveService;
+import de.predic8.util.LogFileDownload;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,6 @@ import java.io.*;
 
 @Component
 public class RestApiRoutes extends RouteBuilder {
-
-    // TODO: refactor identical processes
 
     @Autowired
     ArchiveService service;
@@ -64,14 +63,6 @@ public class RestApiRoutes extends RouteBuilder {
                     .endRest()
                 .get("/log").description("Download current logfile")
                     .route().routeId("log-download-api")
-                    .process(exc -> {
-                        HttpServletResponse response = exc.getIn().getBody(HttpServletResponse.class);
-                        File log = new File("document-archive/logs/log.txt");
-                        InputStream in = new FileInputStream(log);
-                        response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-                        response.setHeader("Content-Disposition", "attachment; filename=" + log.getName());
-                        response.setHeader("Content-Length", String.valueOf(log.length()));
-                        FileCopyUtils.copy(in, response.getOutputStream());
-                    });
+                    .process(new LogFileDownload());
     }
 }

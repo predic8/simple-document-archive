@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head lang="de">
+    <meta charset="UTF-8" />
+    <title>Upload - Dokumenten Archiv</title>
+    <link rel="stylesheet" href="./components/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="archive.css" />
+</head>
+<body ng-app="uploadApp">
+
+<div class="container" ng-controller="UploadController">
+
+    <div class="page-header">
+        <h1>Dokumenten Archiv
+            <small> Hochladen</small>
+        </h1>
+    </div>
+
+    <div class="upload">
+
+        <form action="/upload" method="post" enctype="multipart/form-data">
+
+            <input type="file" id="fileupload" class="inputfile" name="fileToUpload" onchange="angular.element(this).scope().belegNummer(this)" multiple>
+
+            <label for="fileupload" id="fileupload-label">
+                <span class="glyphicon glyphicon-folder-open"> </span>
+                &ensp;<span class="badge">{{fileCount}}</span>
+                &ensp;{{uploadStatus}}
+            </label>
+
+            <div ng-show="filesSelected">
+                <br>
+                <table class="table table-striped table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Datei</th>
+                            <th>Belegnummer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="file in files">
+                            <td>
+                                {{file}}
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="belegNr" placeholder="Nr für: {{file}}">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <input type="submit" id="submitupload" class="inputfile">
+
+            <label ng-show="filesSelected" for="submitupload" class="bigbutton">
+                <span class="glyphicon glyphicon-cloud-upload"></span>
+                &ensp;Hochladen
+            </label>
+
+        </form>
+
+    </div>
+</div>
+
+<script type="text/javascript" src="./components/angular/angular.min.js"></script>
+<script type="text/javascript" src="upload.js"></script>
+</body>
+</html>

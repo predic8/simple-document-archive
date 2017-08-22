@@ -5,4 +5,5 @@ public interface IArchivedFile {
     ArchivedFile findOne(Long id);
     ArchivedFile archiveFile(ArchivedFile file);
     ArchivedFile addFile(String entry);
+    ArchivedFile updateFile(ArchivedFile file);
 }

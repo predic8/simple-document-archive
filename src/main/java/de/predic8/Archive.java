@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 @EnableGlobalMethodSecurity
 public class Archive extends SpringBootServletInitializer {
 
-    // TODO: File upload
+    // TODO: feedback/ visual bei upload
 
     @Autowired
     ArchiveService service;
@@ -38,6 +38,11 @@ public class Archive extends SpringBootServletInitializer {
     }
 
     @PostConstruct
+    public void createUploadFolder() throws Exception {
+        new File("document-archive/upload").mkdirs();
+    }
+
+    @PostConstruct
     public void load() throws Exception {
         if (new File("document-archive/logs/log.txt").exists()) {
             try (Stream<String> stream = Files.lines(Paths.get("document-archive/logs/log.txt"))) {
@@ -50,6 +55,9 @@ public class Archive extends SpringBootServletInitializer {
                     archive.setHash(tmp[3]);
                     archive.setTotalFileName(tmp[2].substring(tmp[2].indexOf('_') + 1));
                     archive.setPath(tmp[2].substring(0, tmp[2].indexOf('_')));
+                    if (tmp.length > 4) {
+                        archive.setBelegnr(tmp[4]);
+                    }
                     service.archiveFile(archive);
                 });
             }

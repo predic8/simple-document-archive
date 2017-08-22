@@ -1,6 +1,8 @@
 package de.predic8.controller;
 
+import org.apache.camel.ProducerTemplate;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,13 +17,22 @@ public class UploadFileController {
 
     final static Logger logger = Logger.getLogger(UploadFileController.class);
 
-    @PostMapping("/upload")
-    public String fileUpload(@RequestParam("fileToUpload")MultipartFile[] mFiles) throws Exception {
+    @Autowired
+    ProducerTemplate template;
 
-        for (MultipartFile mFile : mFiles) {
+    @PostMapping("/upload")
+    public String fileUpload(@RequestParam("fileToUpload")MultipartFile[] mFiles, @RequestParam("belegNr") String[] belegNrs) throws Exception {
+
+        for (int i = 0; i < mFiles.length; i++) {
+
+            logger.info(String.format("file: %s -> %s", mFiles[i].getOriginalFilename(), belegNrs[i]));
+
+            File file;
             try (OutputStream out = new FileOutputStream(
-                    new File("document-archive/in/" + mFile.getOriginalFilename()))) {
-                out.write(mFile.getBytes());
+                    file = new File(String.format("document-archive/upload/%s", mFiles[i].getOriginalFilename())))
+            ){
+                out.write(mFiles[i].getBytes());
+                template.sendBodyAndHeader("direct:upload", file, "belegNr", belegNrs[i]);
             }
         }
 

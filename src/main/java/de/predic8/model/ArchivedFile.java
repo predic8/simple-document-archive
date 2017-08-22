@@ -27,6 +27,9 @@ public class ArchivedFile {
     @Column(name = "hash")
     String hash;
 
+    @Column(name = "belegnr")
+    String belegnr;
+
     String path;
     String totalFileName;
 
@@ -88,6 +91,14 @@ public class ArchivedFile {
         this.totalFileName = totalFileName;
     }
 
+    public String getBelegnr() {
+        return belegnr;
+    }
+
+    public void setBelegnr(String belegnr) {
+        this.belegnr = belegnr;
+    }
+
     @Override
     public String toString() {
         return "ArchivedFile{" +
@@ -96,6 +107,7 @@ public class ArchivedFile {
                 ", time='" + time + '\'' +
                 ", fileName='" + fileName + '\'' +
                 ", hash='" + hash + '\'' +
+                ", belegnr='" + belegnr + '\'' +
                 ", path='" + path + '\'' +
                 ", totalFileName='" + totalFileName + '\'' +
                 '}';

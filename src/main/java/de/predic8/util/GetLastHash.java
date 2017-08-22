@@ -15,7 +15,7 @@ public class GetLastHash implements Processor {
     public void process(Exchange exchange) throws Exception {
 
         String[] lastHashLine = getLastLine().split(" ");
-        exchange.getIn().setBody(lastHashLine[lastHashLine.length - 1]);
+        exchange.getIn().setBody(lastHashLine[3]);
     }
 
     private String getLastLine() throws IOException {
