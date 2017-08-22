@@ -3,7 +3,6 @@ package de.predic8.routes;
 import de.predic8.model.VerifyModel;
 import de.predic8.util.*;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultMessage;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -33,14 +32,6 @@ public class VerifyRoutes extends RouteBuilder {
                 .handled(true)
                     .process(exc -> { exc.setProperty("corrFile", corruptedFile); exc.setProperty("fileIsMissing", true); })
                     .to("direct:fileNotFound")
-                    /*.process(exc -> {
-                        exc.setOut(new DefaultMessage());
-                        VerifyModel model = new VerifyModel();
-                        model.setCorruptedFile(corruptedFile);
-                        model.setValid(false);
-                        model.setFileIsMissing(true);
-                        exc.getOut().setBody(model);
-                    })*/
                     .process(new FileNotFound())
                 .end()
                 .process(exc -> { lastHash = "123"; getFirst = true; corruptedFile = ""; })
@@ -53,15 +44,9 @@ public class VerifyRoutes extends RouteBuilder {
                         .process(exc -> corruptedFile = (String) exc.getProperty("missingFile"))
                         .throwException(new FileNotFoundException())
                     .end()
-                    //.choice()
-                        //.when(exchange -> (Boolean)exchange.getProperty("missing"))
-                            //.process(exc -> corruptedFile = (String) exc.getProperty("missingFile"))
-                            //.throwException(new FileNotFoundException())
-                    //.end()
                     .process(new CreateMessageDigest())
                     .process(exc -> exc.getIn().setBody(this.lastHash))
                     .process(new AddHashedBodyToDigest())
-                    //.setProperty("entry").simple("${property.digest}")
                     .choice()
                         .when(exchangeProperty("digest").isEqualTo(exchangeProperty("docHash")))
                             .log("--> OK <--")
