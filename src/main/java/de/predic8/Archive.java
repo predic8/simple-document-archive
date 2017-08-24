@@ -38,11 +38,6 @@ public class Archive extends SpringBootServletInitializer {
     }
 
     @PostConstruct
-    public void createUploadFolder() throws Exception {
-        new File("document-archive/upload").mkdirs();
-    }
-
-    @PostConstruct
     public void load() throws Exception {
         if (new File("document-archive/logs/log.txt").exists()) {
             try (Stream<String> stream = Files.lines(Paths.get("document-archive/logs/log.txt"))) {

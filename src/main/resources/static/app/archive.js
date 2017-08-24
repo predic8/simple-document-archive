@@ -1,6 +1,6 @@
 'use strict';
 
-    // TODO: change toggle logic
+// TODO: change toggles
 
 let app = angular.module('archiveApp', ['tableSort', 'xeditable']);
 

@@ -1,23 +1,18 @@
 package de.predic8.routes;
 
-import de.predic8.model.ArchivedFile;
 import de.predic8.service.ArchiveService;
+import de.predic8.util.FileDownload;
 import de.predic8.util.LogFileDownload;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.util.FileCopyUtils;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
 
 @Component
 public class RestApiRoutes extends RouteBuilder {
 
     @Autowired
-    ArchiveService service;
+    FileDownload fileDownload;
 
     @Override
     public void configure() throws Exception {
@@ -49,17 +44,7 @@ public class RestApiRoutes extends RouteBuilder {
                     .endRest()
                 .get("/file/download/{id}").description("Download an archived file")
                     .route().routeId("file-download-api")
-                    .process(exc -> {
-                        HttpServletResponse response = exc.getIn().getBody(HttpServletResponse.class);
-                        Long id = Long.parseLong(String.valueOf(exc.getIn().getHeader("id")));
-                        ArchivedFile aFile = service.findOne(id);
-                        File file = new File("document-archive/archive" + aFile.getFileName());
-                        InputStream in = new FileInputStream(file);
-                        response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-                        response.setHeader("Content-Disposition", "attachment; filename=" + aFile.getTotalFileName());
-                        response.setHeader("Content-Length", String.valueOf(file.length()));
-                        FileCopyUtils.copy(in, response.getOutputStream());
-                    })
+                    .process(fileDownload)
                     .endRest()
                 .get("/log").description("Download current logfile")
                     .route().routeId("log-download-api")

@@ -8,9 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class UploadFileController {
@@ -27,13 +26,10 @@ public class UploadFileController {
 
             logger.info(String.format("file: %s -> %s", mFiles[i].getOriginalFilename(), belegNrs[i]));
 
-            File file;
-            try (OutputStream out = new FileOutputStream(
-                    file = new File(String.format("document-archive/upload/%s", mFiles[i].getOriginalFilename())))
-            ){
-                out.write(mFiles[i].getBytes());
-                template.sendBodyAndHeader("direct:upload", file, "belegNr", belegNrs[i]);
-            }
+            Map headers = new HashMap<String, Object>();
+            headers.put("CamelFileName", mFiles[i].getOriginalFilename());
+            headers.put("belegNr", belegNrs[i]);
+            template.sendBodyAndHeaders("direct:test", mFiles[i].getInputStream(), headers);
         }
 
         return "redirect:/";
