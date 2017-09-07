@@ -11,7 +11,8 @@
 
     <div class="container" ng-controller="AppController">
 
-        <div class="page-header">
+        <!--<div class="page-header">-->
+        <div class="botspace">
             <h1>Dokumenten Archiv</h1>
         </div>
 
@@ -21,28 +22,39 @@
                 <form action="/upload" method="post" enctype="multipart/form-data">
 
                     <input type="file" id="fileupload" class="inputfile" name="fileToUpload" onchange="angular.element(this).scope().belegNummer(this)">
-                    <input type="submit" id="submitupload" class="hidden">
 
-                    <div class="input-group">
-                        <span class="input-group-addon">
-                            <label for="fileupload" id="inputLabel">
-                                <span class="glyphicon glyphicon-{{inputIcon}}"></span>
-                                &ensp;{{inputMode}}
-                            </label>
-                        </span>
-                        <input type="text" class="form-control" placeholder="{{belegPlaceholder}}" name="belegNr" id="belegInput">
-                        <!--
-                        <span class="input-group-addon">
-                            <label for="submitupload">
-                                <span class="glyphicon glyphicon-cloud-upload"></span>
-                                &ensp;Hochladen
-                            </label>
-                        </span>
-                        -->
+                    <label for="fileupload" id="fileupload-label" class="labelclick bigbutton">
+                        <span class="glyphicon glyphicon-folder-open"></span>
+                        <!-- &ensp;Datei auswählen -->
+                        &ensp;Datei Hochladen
+                    </label>
+
+                    <div ng-show="fileSelected">
+                        <table class="table table-hover table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Datei</th>
+                                    <th>Belegnummer</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{{fileName}}</td>
+                                    <td>
+                                        <input type="text" class="form-control" placeholder="" name="belegNr">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
+                    <input type="submit" id="submitupload" class="inputfile">
+                    <label ng-show="fileSelected" for="submitupload" class="bigbutton">
+                        <span class="glyphicon glyphicon-cloud-upload"></span>
+                        &ensp;Hochladen
+                    </label>
                 </form>
-                <a href="./app/upload.html">Mehrere Daten Hochladen</a>
+                <a class="spaced" href="./app/upload.html">Mehrere Daten Hochladen</a>
             </div>
             <br>
         </div>
@@ -73,9 +85,7 @@
             </div>
         </div>
 
-        <hr />
-
-        <div ng-show="files &amp;&amp; files.length > 0">
+        <div class="topspace" ng-show="files &amp;&amp; files.length > 0">
 
             <div class="input-group">
                 <span class="input-group-addon">
@@ -83,8 +93,6 @@
                 </span>
                 <input type="text" class="form-control" id="searchField" placeholder="Suchen..." ng-model="searchArchive">
             </div>
-
-            <hr />
 
             <div>
                 <table class="table table-striped table-hover" id="archiveTable" ts-wrapper> <!-- table-condensed -->

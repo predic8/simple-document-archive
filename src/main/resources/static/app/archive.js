@@ -14,9 +14,7 @@ app.controller('AppController', ($scope, $http, $interval, $timeout) => {
     $scope.showVerifyFalse = false;
     $scope.showVerifyAlert = false;
 
-    $scope.belegPlaceholder = 'Belegnummer';
-    $scope.inputIcon = 'folder-open';
-    $scope.inputMode = 'Datei auswählen';
+    $scope.fileSelected = false;
 
     $scope.reload = () => {
         $http.get('/rest/archive')
@@ -50,26 +48,10 @@ app.controller('AppController', ($scope, $http, $interval, $timeout) => {
             });
     }
 
-    let beleg = document.getElementById('belegInput');
-    beleg.onkeypress = function(e) {
-        if (!e) e = window.event;
-        if (((e.keyCode || e.which) == '13')
-                && document.getElementById('inputLabel').htmlFor == 'submitupload') {
-            console.log('click enter');
-            document.getElementById('submitupload').click();
-        }
-    }
-
     $scope.belegNummer = (element) => {
+        $scope.fileSelected = true;
         let fileName = element.files[0].name;
-        $scope.belegPlaceholder = 'Nr für: ' + fileName;
-
-        let inputLabel = document.getElementById('inputLabel');
-        $scope.inputIcon = 'cloud-upload';
-        $scope.inputMode = 'Hochladen';
-        inputLabel.htmlFor = 'submitupload'
-
-        beleg.focus();
+        $scope.fileName = fileName;
         $scope.$apply();
     }
 

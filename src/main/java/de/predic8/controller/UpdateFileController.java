@@ -46,8 +46,6 @@ public class UpdateFileController {
                 writer.print(currentLine + System.lineSeparator());
             }
 
-            File old = new File("document-archive/logs/log.txt");
-            old.delete();
             file.setBelegnr(belegNr);
             service.updateFile(file);
             new File("document-archive/logs/log.tmp.txt").renameTo(new File("document-archive/logs/log.txt"));

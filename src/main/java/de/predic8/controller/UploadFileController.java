@@ -22,13 +22,16 @@ public class UploadFileController {
     @PostMapping("/upload")
     public String fileUpload(@RequestParam("fileToUpload")MultipartFile[] mFiles, @RequestParam("belegNr") String[] belegNrs) throws Exception {
 
+        boolean hasBelegNr = belegNrs.length > 0;
+
         for (int i = 0; i < mFiles.length; i++) {
 
-            logger.info(String.format("file: %s -> %s", mFiles[i].getOriginalFilename(), belegNrs[i]));
+            logger.info(String.format("file: %s -> %s", mFiles[i].getOriginalFilename(),
+                    hasBelegNr ? belegNrs[i] : ""));
 
             Map headers = new HashMap<String, Object>();
             headers.put("CamelFileName", mFiles[i].getOriginalFilename());
-            headers.put("belegNr", belegNrs[i]);
+            headers.put("belegNr", hasBelegNr ? belegNrs[i] : "");
             template.sendBodyAndHeaders("direct:test", mFiles[i].getInputStream(), headers);
         }
 
