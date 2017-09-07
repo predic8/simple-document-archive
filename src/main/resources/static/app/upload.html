@@ -34,6 +34,7 @@
                         <tr>
                             <th>Datei</th>
                             <th>Belegnummer</th>
+                            <th>Beschreibung</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,7 +43,10 @@
                                 {{file}}
                             </td>
                             <td>
-                                <input type="text" class="form-control" name="belegNr" placeholder="Nr für: {{file}}">
+                                <input type="text" class="form-control" name="belegNr" placeholder="">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="description" placeholder="">
                             </td>
                         </tr>
                     </tbody>

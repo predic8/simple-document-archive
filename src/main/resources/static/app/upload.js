@@ -14,7 +14,7 @@ let validateForm = () => {
 app.controller('UploadController', ($scope) => {
 
     $scope.filesSelected = false;
-    $scope.uploadStatus = 'Datei auswählen';
+    $scope.uploadStatus = 'Dateien auswählen';
 
     $scope.belegNummer = (element) => {
 
