@@ -14,9 +14,10 @@ public class ArchiverRoutes extends RouteBuilder {
         from("file:document-archive/in?readLock=changed").routeId("archive-in-watch")
                 .to("direct:archive");
 
-        from("direct:test")
+        from("direct:upload")
                 .to("file:document-archive/upload?fileName=${header.CamelFileName}&delete=true")
                 .setProperty("belegNr").simple("${header.belegNr}")
+                .setProperty("descr").simple("${header.descr}")
                 .pollEnrich("file:document-archive/upload?fileName=${header.CamelFileName}")
                 .to("direct:archive");
 
@@ -28,7 +29,7 @@ public class ArchiverRoutes extends RouteBuilder {
                 .to("file:document-archive/archive?fileName=${property.fileName}")
                 .to("direct:get-last-hash")
                 .process(new AddHashedBodyToDigest())
-                .setProperty("entry").simple("${date:now:yyyy-MM-dd HH:mm:ss} ${property.fileName} ${property.digest} ${property.belegNr}")
+                .setProperty("entry").simple("${date:now:yyyy-MM-dd HH:mm:ss} ${property.fileName} ${property.digest} ${property.belegNr} ${property.descr}")
                 .setBody().simple("${property.entry}\n")
                 .transform(body().append("\n"))
                 .to("file:document-archive/logs?fileExist=Append&fileName=log.txt")

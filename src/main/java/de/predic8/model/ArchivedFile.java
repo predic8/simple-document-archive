@@ -30,8 +30,26 @@ public class ArchivedFile {
     @Column(name = "belegnr")
     String belegnr;
 
+    @Column(name = "description")
+    String description;
+
     String path;
     String totalFileName;
+
+    @Override
+    public String toString() {
+        return "ArchivedFile{" +
+                "id=" + id +
+                ", date='" + date + '\'' +
+                ", time='" + time + '\'' +
+                ", fileName='" + fileName + '\'' +
+                ", hash='" + hash + '\'' +
+                ", belegnr='" + belegnr + '\'' +
+                ", description='" + description + '\'' +
+                ", path='" + path + '\'' +
+                ", totalFileName='" + totalFileName + '\'' +
+                '}';
+    }
 
     public ArchivedFile() {}
 
@@ -99,17 +117,11 @@ public class ArchivedFile {
         this.belegnr = belegnr;
     }
 
-    @Override
-    public String toString() {
-        return "ArchivedFile{" +
-                "id=" + id +
-                ", date='" + date + '\'' +
-                ", time='" + time + '\'' +
-                ", fileName='" + fileName + '\'' +
-                ", hash='" + hash + '\'' +
-                ", belegnr='" + belegnr + '\'' +
-                ", path='" + path + '\'' +
-                ", totalFileName='" + totalFileName + '\'' +
-                '}';
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

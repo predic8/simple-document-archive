@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <title>Dokumenten Archiv</title>
     <link rel="stylesheet" href="./app/components/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="./app/components/angular-xeditable/dist/css/xeditable.min.css" />
     <link rel="stylesheet" href="./app/archive.css" />
 </head>
 <body ng-app="archiveApp">
@@ -19,7 +18,7 @@
         <div class="upload">
 
             <div class="quickupload">
-                <form action="/upload" method="post" enctype="multipart/form-data">
+                <form name="singleUpload" action="/upload" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
 
                     <input type="file" id="fileupload" class="inputfile" name="fileToUpload" onchange="angular.element(this).scope().belegNummer(this)">
 
@@ -35,6 +34,7 @@
                                 <tr>
                                     <th>Datei</th>
                                     <th>Belegnummer</th>
+                                    <th>Beschreibung</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -42,6 +42,9 @@
                                     <td>{{fileName}}</td>
                                     <td>
                                         <input type="text" class="form-control" placeholder="" name="belegNr">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" placeholder="" name="description">
                                     </td>
                                 </tr>
                             </tbody>
@@ -113,9 +116,14 @@
                                     Belegnummer&ensp;
                                 </a>
                             </th>
-                            <th ts-criteria="totalFileName|lowercase" class="absorbing-column" ts-default>
+                            <th ts-criteria="totalFileName|lowercase" ts-default> <!-- class="absorbing-column"-->
                                 <a href="" class="nounderline">
                                     Dateiname&ensp;
+                                </a>
+                            </th>
+                            <th ts-criteria="description|lowecase" class="absorbing-column">
+                                <a href="" class="nounderline">
+                                    Beschreibung
                                 </a>
                             </th>
                         </tr>
@@ -125,16 +133,13 @@
                             <!--<td>{{file.date | date:'yyyy-MM-dd'}}</td>-->
                             <td>{{file.date | date:'dd.MM.yyyy'}}</td>
                             <td>{{file.time | date:'HH:mm:ss'}}</td>
-                            <td>
-                                <a href="" editable-text="file.belegnr" onbeforesave="updateBelegNr(file.id, $data)">
-                                    {{file.belegnr || 'keine'}}
-                                </a>
-                            </td>
+                            <td>{{file.belegnr || ''}}</td>
                             <td>
                                 <span ng-click="gotoFile(file.id)" class="downloadableFile"> <!-- ng-dblclick -->
                                     {{file.totalFileName}}
                                 </span>
                             </td>
+                            <td>{{file.description || ''}}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -144,7 +149,6 @@
 
 <script type="text/javascript" src="./app/components/angular/angular.min.js"></script>
 <script type="text/javascript" src="./app/components/angular-tablesort/js/angular-tablesort.js"></script>
-<script type="text/javascript" src="./app/components/angular-xeditable/dist/js/xeditable.min.js"></script>
 <script type="text/javascript" src="./app/components/ng-file-upload/ng-file-upload.min.js"></script>
 <script type="text/javascript" src="./app/archive.js"></script>
 </body>

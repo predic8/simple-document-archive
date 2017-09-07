@@ -1,5 +1,16 @@
 const app = angular.module('uploadApp', []);
 
+let validateForm = () => {
+    let forms = document.forms["multiUpload"]["belegNr"];
+
+    forms.forEach(element => {
+        if (element.value.includes(" ")) {
+            alert("Keine Leerzeichen in der Belegnummer")
+            return false;
+        }
+    });
+}
+
 app.controller('UploadController', ($scope) => {
 
     $scope.filesSelected = false;

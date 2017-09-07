@@ -6,6 +6,9 @@ import de.predic8.repo.ArchiveRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 @Component
 public class ArchiveService implements IArchivedFile {
 
@@ -39,6 +42,13 @@ public class ArchiveService implements IArchivedFile {
         file.setTotalFileName(properties[2].substring(properties[2].indexOf('_') + 1));
         if (properties.length > 4) {
             file.setBelegnr(properties[4]);
+        }
+        if (properties.length > 5) {
+            try {
+                file.setDescription(URLDecoder.decode(properties[5], "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
         this.archiveFile(file);
         return file;

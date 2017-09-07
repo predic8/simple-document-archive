@@ -2,11 +2,15 @@
 
 // TODO: change toggles
 
-let app = angular.module('archiveApp', ['tableSort', 'xeditable']);
+let app = angular.module('archiveApp', ['tableSort']);
 
-app.run((editableOptions) => {
-    editableOptions.theme = 'bs3';
-});
+let validateForm = () => {
+    let form = document.forms["singleUpload"]["belegNr"].value;
+    if (form.includes(" ")) {
+        alert("Keine Leerzeichen in der Belegnummer")
+        return false;
+    }
+}
 
 app.controller('AppController', ($scope, $http, $interval, $timeout) => {
 
@@ -53,13 +57,6 @@ app.controller('AppController', ($scope, $http, $interval, $timeout) => {
         let fileName = element.files[0].name;
         $scope.fileName = fileName;
         $scope.$apply();
-    }
-
-    $scope.updateBelegNr = (id, data) => {
-        $http.put('/update/' + id, data)
-            .then((response) => {
-                $scope.reload();
-            });
     }
 
     $scope.dlLog = () => {

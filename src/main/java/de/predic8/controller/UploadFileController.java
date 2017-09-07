@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,19 +21,28 @@ public class UploadFileController {
     ProducerTemplate template;
 
     @PostMapping("/upload")
-    public String fileUpload(@RequestParam("fileToUpload")MultipartFile[] mFiles, @RequestParam("belegNr") String[] belegNrs) throws Exception {
+    public String fileUpload(
+            @RequestParam("fileToUpload")MultipartFile[] mFiles,
+            @RequestParam("belegNr") String[] belegNrs,
+            @RequestParam() String[] description) throws Exception {
 
         boolean hasBelegNr = belegNrs.length > 0;
+        boolean hasDescription = description.length > 0;
 
         for (int i = 0; i < mFiles.length; i++) {
 
-            logger.info(String.format("file: %s -> %s", mFiles[i].getOriginalFilename(),
-                    hasBelegNr ? belegNrs[i] : ""));
+            logger.info(String.format("file: %s -> %s -> %s", mFiles[i].getOriginalFilename(),
+                    hasBelegNr ? belegNrs[i] : "",
+                    hasDescription ? description[i] : ""));
+
+            if (hasDescription)
+                description[i] = URLEncoder.encode(description[i], "UTF-8");
 
             Map headers = new HashMap<String, Object>();
             headers.put("CamelFileName", mFiles[i].getOriginalFilename());
             headers.put("belegNr", hasBelegNr ? belegNrs[i] : "");
-            template.sendBodyAndHeaders("direct:test", mFiles[i].getInputStream(), headers);
+            headers.put("descr", hasDescription ? description[i] : "");
+            template.sendBodyAndHeaders("direct:upload", mFiles[i].getInputStream(), headers);
         }
 
         return "redirect:/";

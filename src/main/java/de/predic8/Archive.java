@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
@@ -52,6 +54,13 @@ public class Archive extends SpringBootServletInitializer {
                     archive.setPath(tmp[2].substring(0, tmp[2].indexOf('_')));
                     if (tmp.length > 4) {
                         archive.setBelegnr(tmp[4]);
+                    }
+                    if (tmp.length > 5) {
+                        try {
+                            archive.setDescription(URLDecoder.decode(tmp[5], "UTF-8"));
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
                     }
                     service.archiveFile(archive);
                 });
