@@ -21,8 +21,6 @@ import java.util.stream.Stream;
 @EnableGlobalMethodSecurity
 public class Archive extends SpringBootServletInitializer {
 
-    // TODO: feedback/ visual bei upload
-
     @Autowired
     ArchiveService service;
 

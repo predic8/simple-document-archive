@@ -5,11 +5,14 @@
 let app = angular.module('archiveApp', ['tableSort']);
 
 let validateForm = () => {
-    let form = document.forms["singleUpload"]["belegNr"].value;
-    if (form.includes(" ")) {
-        alert("Keine Leerzeichen in der Belegnummer")
-        return false;
-    }
+    let forms = document.forms["fileUpload"]["belegNr"];
+
+    forms.forEach(element => {
+        if (element.value.includes(" ")) {
+            alert("Keine Leerzeichen in der Belegnummer")
+            return false;
+        }
+    });
 }
 
 app.controller('AppController', ($scope, $http, $interval, $timeout) => {
@@ -18,7 +21,8 @@ app.controller('AppController', ($scope, $http, $interval, $timeout) => {
     $scope.showVerifyFalse = false;
     $scope.showVerifyAlert = false;
 
-    $scope.fileSelected = false;
+    $scope.filesSelected = false;
+    $scope.uploadStatus = 'Dateien auswählen';
 
     $scope.reload = () => {
         $http.get('/rest/archive')
@@ -53,9 +57,19 @@ app.controller('AppController', ($scope, $http, $interval, $timeout) => {
     }
 
     $scope.belegNummer = (element) => {
-        $scope.fileSelected = true;
-        let fileName = element.files[0].name;
-        $scope.fileName = fileName;
+
+        let fileNames = [];
+
+        for (let i = 0; i < element.files.length; i++) {
+
+            fileNames.push(element.files[i].name);
+
+        }
+
+        $scope.fileCount = fileNames.length;
+        $scope.uploadStatus = fileNames.length == 1 ? 'Datei ausgewählt' : 'Dateien ausgewählt';
+        $scope.files = fileNames;
+        $scope.filesSelected = true;
         $scope.$apply();
     }
 
