@@ -88,14 +88,7 @@ deployment {
 							ports: [[
 								containerPort: 25
 							]],
-                                                        resources: [[
-                                                                requests: [[
-                                                                        memory: "1G"
-                                                                ]],
-                                                                limits: [[
-                                                                        memory: "2G"
-                                                                ]]
-                                                        ]]
+                                                        resources: [ requests: [ memory: "1G" ], limits: [ memory: "2G" ] ]
 						] ],
 						volumes: [[
 							name: "diskstation-da",
