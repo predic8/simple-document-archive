@@ -1,9 +1,11 @@
 'use strict';
 
 // TODO: change toggles
+// TODO: self invoking functions
 
 let app = angular.module('archiveApp', ['tableSort']);
 
+/* kein bedarf bei fixer belegnummers
 let validateForm = () => {
     let forms = document.forms["fileUpload"]["belegNr"];
 
@@ -14,12 +16,15 @@ let validateForm = () => {
         }
     });
 }
+*/
 
 app.controller('AppController', ($scope, $http, $interval, $timeout) => {
 
     $scope.showVerifyTrue = false;
     $scope.showVerifyFalse = false;
     $scope.showVerifyAlert = false;
+
+    $scope.lastBelegNr = 1;
 
     $scope.filesSelected = false;
     $scope.uploadStatus = 'Dateien auswählen';
@@ -56,19 +61,36 @@ app.controller('AppController', ($scope, $http, $interval, $timeout) => {
             });
     }
 
+    $http.get('/rest/archive/belegNr')
+        .then((response) => {
+            $scope.currentBelegNr = response.data;
+        });
+
     $scope.belegNummer = (element) => {
 
         let fileNames = [];
 
         for (let i = 0; i < element.files.length; i++) {
-
             fileNames.push(element.files[i].name);
+        }
 
+        let fileCountArray = [];
+        let startValue = $scope.currentBelegNr + 1;
+        let endValue = fileNames.length + startValue;
+        for (let i = startValue; i <= endValue; i++) {
+            fileCountArray.push(i.toString());
         }
 
         $scope.fileCount = fileNames.length;
         $scope.uploadStatus = fileNames.length == 1 ? 'Datei ausgewählt' : 'Dateien ausgewählt';
-        $scope.files = fileNames;
+        //$scope.files = fileNames;
+        //$scope.fileCount = fileCount;
+        $scope.fileData = fileNames.map((file, index) => {
+            return {
+                name: file,
+                count: fileCountArray[index]
+            }
+        });
         $scope.filesSelected = true;
         $scope.$apply();
     }
@@ -89,4 +111,3 @@ app.controller('AppController', ($scope, $http, $interval, $timeout) => {
         $scope.showVerifyFalse = false;
     }
 });
-

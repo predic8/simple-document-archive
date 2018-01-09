@@ -3,6 +3,7 @@ package de.predic8;
 import de.predic8.model.ArchivedFile;
 import de.predic8.service.ArchiveService;
 import org.apache.camel.main.Main;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,16 +11,17 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLDecoder;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.stream.Stream;
+import java.nio.charset.Charset;
 
 @SpringBootApplication
 @EnableGlobalMethodSecurity
 public class Archive extends SpringBootServletInitializer {
+
+    final static Logger logger = Logger.getLogger(Archive.class);
+
+    public static int currentBelegNr = 0;
 
     @Autowired
     ArchiveService service;
@@ -38,12 +40,15 @@ public class Archive extends SpringBootServletInitializer {
     }
 
     @PostConstruct
-    public void load() throws Exception {
+    public void loadLog() throws Exception {
         if (new File("document-archive/logs/log.txt").exists()) {
-            try (Stream<String> stream = Files.lines(Paths.get("document-archive/logs/log.txt"))) {
-                stream.forEach(line -> {
+            String current, last = "";
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(
+                    new FileInputStream("document-archive/logs/log.txt"), Charset.forName("UTF-8")))) {
+
+                while ((current = br.readLine()) != null) {
                     ArchivedFile archive = new ArchivedFile();
-                    String[] tmp = line.split(" ");
+                    String[] tmp = current.split(" ");
                     archive.setDate(tmp[0]);
                     archive.setTime(tmp[1]);
                     archive.setFileName(tmp[2]);
@@ -61,7 +66,13 @@ public class Archive extends SpringBootServletInitializer {
                         }
                     }
                     service.archiveFile(archive);
-                });
+                    last = current;
+                }
+                String[] lastLine = last.split(" ");
+                if (lastLine.length > 4) {
+                    currentBelegNr = Integer.parseInt(lastLine[4]);
+                    logger.info(String.format("Current BelegNr.: %d", currentBelegNr));
+                }
             }
         }
     }

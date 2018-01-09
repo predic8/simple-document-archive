@@ -1,5 +1,6 @@
 package de.predic8.controller;
 
+import de.predic8.Archive;
 import org.apache.camel.ProducerTemplate;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,16 +24,14 @@ public class UploadFileController {
     @PostMapping("/upload")
     public String fileUpload(
             @RequestParam("fileToUpload")MultipartFile[] mFiles,
-            @RequestParam("belegNr") String[] belegNrs,
-            @RequestParam() String[] description) throws Exception {
+            @RequestParam(required = false, name = "description") String[] description) throws Exception {
 
-        boolean hasBelegNr = belegNrs.length > 0;
         boolean hasDescription = description.length > 0;
 
         for (int i = 0; i < mFiles.length; i++) {
 
             logger.info(String.format("file: %s -> %s -> %s", mFiles[i].getOriginalFilename(),
-                    hasBelegNr ? belegNrs[i] : "",
+                    Archive.currentBelegNr,
                     hasDescription ? description[i] : ""));
 
             if (hasDescription)
@@ -40,7 +39,7 @@ public class UploadFileController {
 
             Map headers = new HashMap<String, Object>();
             headers.put("CamelFileName", mFiles[i].getOriginalFilename());
-            headers.put("belegNr", hasBelegNr ? belegNrs[i] : "");
+            headers.put("belegNr", ++Archive.currentBelegNr);
             headers.put("descr", hasDescription ? description[i] : "");
             template.sendBodyAndHeaders("direct:upload", mFiles[i].getInputStream(), headers);
         }
